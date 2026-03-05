@@ -14,8 +14,7 @@
 //     .then(b => console.log(Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')))
 //
 const ALLOWED_USERS = [
-  // ADMIN — change this password before sharing!
-  { username: "admin", hash: "8da193366e1554c08b2870c50f737b9587c3372b656151c4a96028af26f51334" },
+  { username: "admin", hash: "620fd759d370c40d9c245b765cf48ebf63b4fb11b8c6adfd2ce6c6c9aac2be78" },
 
   // Example: { username: "john", hash: "abc123..." },
 ];
