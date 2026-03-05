@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#0a0a1a">
 <title>Early Out Sniper v6</title>
 <link rel="manifest" href="manifest.json">
+<script src="users.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -155,6 +156,11 @@
     border: 1px solid rgba(0,255,65,0.3);
   }
   .btn-secondary:active { transform: scale(0.98); }
+  .btn-danger {
+    background: rgba(255,68,68,0.15);
+    color: #ff4444;
+    border: 1px solid rgba(255,68,68,0.3);
+  }
 
   .instructions {
     font-size: 11px;
@@ -240,17 +246,6 @@
   }
   .switch.on::after { left: 22px; }
 
-  .share-link {
-    background: #111;
-    border: 1px solid #333;
-    color: #aaa;
-    padding: 10px;
-    border-radius: 6px;
-    font-size: 11px;
-    word-break: break-all;
-    margin: 8px 0;
-  }
-
   .preset-row {
     display: flex;
     gap: 8px;
@@ -269,7 +264,6 @@
   }
   .preset-btn:active { border-color: #00ff41; color: #00ff41; }
 
-  /* Bookmarklet display */
   .bookmarklet-area {
     background: #0a0a0a;
     border: 1px dashed #333;
@@ -301,10 +295,7 @@
     gap: 10px;
     margin-bottom: 12px;
   }
-  .gate-offset-row label {
-    font-size: 12px;
-    color: #aaa;
-  }
+  .gate-offset-row label { font-size: 12px; color: #aaa; }
   .gate-offset-row select {
     background: #111;
     border: 1px solid #333;
@@ -314,14 +305,123 @@
     font-family: 'Courier New', monospace;
     font-size: 13px;
   }
+
+  /* ===== LOGIN SCREEN ===== */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+  }
+  #login-screen .login-box {
+    width: 100%;
+    max-width: 360px;
+  }
+  #login-screen .login-box h1 {
+    margin-bottom: 4px;
+  }
+  #login-screen input {
+    display: block;
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  #login-screen input:focus {
+    border-color: #00ff41;
+    outline: none;
+  }
+  #login-screen input::placeholder { color: #555; }
+  .login-error {
+    color: #ff4444;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 10px;
+    min-height: 16px;
+  }
+  .login-footer {
+    text-align: center;
+    color: #444;
+    font-size: 10px;
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+  .logged-in-as {
+    text-align: center;
+    color: #555;
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
+  .logged-in-as span { color: #00ff41; }
+
+  /* ===== ADMIN ===== */
+  .admin-input {
+    display: block;
+    width: 100%;
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+  .admin-input:focus { border-color: #00ff41; outline: none; }
+  .admin-input::placeholder { color: #555; }
+  .hash-output {
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 11px;
+    color: #ffaa00;
+    word-break: break-all;
+    margin: 8px 0;
+    min-height: 40px;
+  }
+  .user-list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+  }
+  .user-list-item .username { color: #00ff41; }
+  .user-list-item .hash-preview { color: #555; font-size: 10px; }
 </style>
 </head>
 <body>
 
+<!-- ===================== LOGIN SCREEN ===================== -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>EARLY OUT SNIPER v6</h1>
+    <div class="subtitle">TWIN RIVER / BALLY'S</div>
+    <div style="text-align:center;font-size:40px;margin:24px 0;">&#127919;</div>
+    <input type="text" id="login-user" placeholder="Username" autocomplete="username" autocapitalize="none">
+    <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password">
+    <div class="login-error" id="login-error"></div>
+    <button class="btn btn-primary" onclick="doLogin()">LOGIN</button>
+    <div class="login-footer">Access required. Contact admin for credentials.</div>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP (hidden until auth) ===================== -->
+<div id="app" style="display:none;">
+
 <h1>EARLY OUT SNIPER v6</h1>
 <div class="subtitle">TWIN RIVER / BALLY'S</div>
+<div class="logged-in-as">Logged in as <span id="display-user"></span> | <a href="#" onclick="doLogout();return false;" style="color:#ff4444;text-decoration:none;font-size:10px;">LOGOUT</a></div>
 
-<div class="tab-bar">
+<div class="tab-bar" id="tab-bar">
   <div class="tab active" data-tab="schedule">SCHEDULE</div>
   <div class="tab" data-tab="sniper">SNIPER</div>
   <div class="tab" data-tab="howto">HOW TO</div>
@@ -358,7 +458,7 @@
     <h2>SHARE SCHEDULE</h2>
     <button class="btn btn-secondary" onclick="exportSchedule()">COPY SHARE LINK</button>
     <div class="instructions" style="margin-top:8px;">
-      Share a link with your schedule pre-loaded so your friends can use it instantly.
+      Share a link with your schedule pre-loaded. Your friend still needs their own login.
     </div>
   </div>
 </div>
@@ -407,8 +507,8 @@
         <li>Click <code>COPY SNIPER SCRIPT</code></li>
         <li>Open <strong>Casino Schedule Ease</strong> in another tab</li>
         <li>Navigate to <strong>My Schedule</strong> and click your shift so "Early Out" is visible</li>
-        <li>Press <code>F12</code> > Console tab > type <code>allow pasting</code> > Enter</li>
-        <li>Paste the script > Enter</li>
+        <li>Press <code>F12</code> &gt; Console tab &gt; type <code>allow pasting</code> &gt; Enter</li>
+        <li>Paste the script &gt; Enter</li>
         <li>The sniper arms automatically and fires at the right time</li>
       </ol>
     </div>
@@ -418,10 +518,10 @@
     <h2>IPHONE (SAFARI)</h2>
     <div class="instructions">
       <ol>
-        <li>Add this page to your Home Screen (Share > Add to Home Screen)</li>
+        <li>Add this page to your Home Screen (Share &gt; Add to Home Screen)</li>
         <li>Enter your schedule</li>
         <li>When the countdown is close, open <strong>Safari</strong></li>
-        <li>Go to Casino Schedule Ease > My Schedule > click your shift</li>
+        <li>Go to Casino Schedule Ease &gt; My Schedule &gt; click your shift</li>
         <li>Go to the <strong>Sniper</strong> tab and tap <code>COPY SNIPER SCRIPT</code></li>
         <li>In Safari's address bar, type <code>javascript:</code> then paste the script</li>
         <li><strong>Alternative:</strong> Create a bookmarklet:
@@ -440,7 +540,7 @@
     <h2>ANDROID (CHROME / KIWI)</h2>
     <div class="instructions">
       <ol>
-        <li>Add this page to your Home Screen (Menu > Add to Home screen)</li>
+        <li>Add this page to your Home Screen (Menu &gt; Add to Home screen)</li>
         <li>Enter your schedule</li>
         <li><strong>Kiwi Browser</strong> (recommended): supports Tampermonkey extension for automatic execution</li>
         <li><strong>Chrome</strong>: Use the bookmarklet method:
@@ -461,10 +561,10 @@
     <div class="instructions">
       <ol>
         <li>Set up your schedule</li>
-        <li>Go to <strong>Schedule</strong> tab > <code>COPY SHARE LINK</code></li>
+        <li>Go to <strong>Schedule</strong> tab &gt; <code>COPY SHARE LINK</code></li>
         <li>Send the link to your friend</li>
         <li>They open it and the schedule is pre-loaded</li>
-        <li>They can modify it for their own shifts</li>
+        <li>They still need their own login credentials from the admin</li>
       </ol>
     </div>
   </div>
@@ -476,7 +576,7 @@
         <li>The script auto-detects the correct fire time based on your schedule</li>
         <li>If you're already past the gate time, it fires immediately</li>
         <li>200ms buffer is built in so the server has time to open the gate</li>
-        <li>If "not yet available" appears, the script auto-retries (close > reopen loop)</li>
+        <li>If "not yet available" appears, the script auto-retries (close &gt; reopen loop)</li>
         <li>Max 100 retries (~30 seconds) before it gives up</li>
         <li>Make sure your shift is clicked/expanded so "Early Out" link is visible BEFORE the script runs</li>
       </ol>
@@ -484,20 +584,168 @@
   </div>
 </div>
 
+<!-- ===================== ADMIN TAB (admin only) ===================== -->
+<div class="page" id="page-admin">
+  <div class="card">
+    <h2>ADD NEW USER</h2>
+    <div class="instructions" style="margin-bottom:12px;">
+      Enter their desired username and password to generate the hash.
+      Then add it to <code>users.js</code> and push to GitHub.
+    </div>
+    <input class="admin-input" type="text" id="admin-new-user" placeholder="Username" autocapitalize="none">
+    <input class="admin-input" type="text" id="admin-new-pass" placeholder="Password">
+    <button class="btn btn-secondary" onclick="generateHash()">GENERATE HASH</button>
+    <div class="hash-output" id="hash-output">Hash will appear here...</div>
+    <button class="btn btn-secondary" onclick="copyHashEntry()">COPY users.js ENTRY</button>
+  </div>
+
+  <div class="card">
+    <h2>CURRENT USERS</h2>
+    <div id="user-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>QUICK ADD (Console)</h2>
+    <div class="instructions">
+      <p>Or generate a hash from any browser console:</p>
+      <code style="display:block;margin-top:8px;font-size:10px;word-break:break-all;">
+        crypto.subtle.digest('SHA-256', new TextEncoder().encode('username:password')).then(b =&gt; console.log(Array.from(new Uint8Array(b)).map(x=&gt;x.toString(16).padStart(2,'0')).join('')))
+      </code>
+    </div>
+  </div>
+</div>
+
+</div><!-- end #app -->
+
 <div class="toast" id="toast"></div>
 
 <script>
+// ===================== AUTH =====================
+let currentUser = null;
+let generatedHash = '';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function doLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+
+  if (!user || !pass) {
+    errEl.textContent = 'Enter username and password';
+    return;
+  }
+
+  const hash = await sha256(user + ':' + pass);
+  const match = ALLOWED_USERS.find(u => u.username.toLowerCase() === user && u.hash === hash);
+
+  if (!match) {
+    errEl.textContent = 'Invalid credentials';
+    document.getElementById('login-pass').value = '';
+    return;
+  }
+
+  currentUser = match.username;
+  localStorage.setItem('eo-session', JSON.stringify({ user: currentUser, hash: hash }));
+  showApp();
+}
+
+async function checkSession() {
+  try {
+    const session = JSON.parse(localStorage.getItem('eo-session'));
+    if (!session) return false;
+    const match = ALLOWED_USERS.find(u =>
+      u.username.toLowerCase() === session.user.toLowerCase() && u.hash === session.hash
+    );
+    if (match) {
+      currentUser = match.username;
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function doLogout() {
+  currentUser = null;
+  localStorage.removeItem('eo-session');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').textContent = '';
+  if (countdownInterval) clearInterval(countdownInterval);
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('display-user').textContent = currentUser;
+
+  // Show admin tab if admin
+  if (currentUser.toLowerCase() === 'admin') {
+    const adminTab = document.createElement('div');
+    adminTab.className = 'tab';
+    adminTab.dataset.tab = 'admin';
+    adminTab.textContent = 'ADMIN';
+    document.getElementById('tab-bar').appendChild(adminTab);
+    buildUserList();
+  }
+
+  initApp();
+}
+
+// ===================== ADMIN =====================
+async function generateHash() {
+  const user = document.getElementById('admin-new-user').value.trim().toLowerCase();
+  const pass = document.getElementById('admin-new-pass').value;
+  if (!user || !pass) {
+    document.getElementById('hash-output').textContent = 'Enter both username and password';
+    return;
+  }
+  generatedHash = await sha256(user + ':' + pass);
+  document.getElementById('hash-output').textContent = generatedHash;
+}
+
+function copyHashEntry() {
+  const user = document.getElementById('admin-new-user').value.trim().toLowerCase();
+  if (!user || !generatedHash) {
+    showToast('Generate a hash first');
+    return;
+  }
+  const entry = `  { username: "${user}", hash: "${generatedHash}" },`;
+  copyToClipboard(entry);
+  showToast('Copied! Paste into users.js');
+}
+
+function buildUserList() {
+  const list = document.getElementById('user-list');
+  if (!list) return;
+  list.innerHTML = '';
+  ALLOWED_USERS.forEach(u => {
+    const item = document.createElement('div');
+    item.className = 'user-list-item';
+    item.innerHTML = `
+      <span class="username">${u.username}</span>
+      <span class="hash-preview">${u.hash.substring(0, 12)}...</span>
+    `;
+    list.appendChild(item);
+  });
+}
+
 // ===================== STATE =====================
 const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-let schedule = {}; // { Mon: "10:00", Tue: null, ... }
+let schedule = {};
 let gateOffsetHours = 2;
 let notifyEnabled = false;
 let notify1Enabled = true;
 let countdownInterval = null;
 
 // ===================== INIT =====================
-function init() {
+function initApp() {
   loadFromStorage();
   checkUrlImport();
   buildScheduleGrid();
@@ -608,27 +856,18 @@ function calcGateTime(shiftTime) {
 function calcGateDate(shiftTime, dayOfWeek) {
   const now = new Date();
   const [h, m] = shiftTime.split(':').map(Number);
-
-  // dayOfWeek: 0=Mon ... 6=Sun
-  // JS getDay: 0=Sun ... 6=Sat
   const jsDow = now.getDay();
-  const currentDow = jsDow === 0 ? 6 : jsDow - 1; // convert to Mon=0
-
+  const currentDow = jsDow === 0 ? 6 : jsDow - 1;
   let daysAhead = dayOfWeek - currentDow;
   if (daysAhead < 0) daysAhead += 7;
-
   const shiftDate = new Date(now);
   shiftDate.setDate(shiftDate.getDate() + daysAhead);
   shiftDate.setHours(h, m, 0, 0);
-
   const gateDate = new Date(shiftDate.getTime() - gateOffsetHours * 60 * 60 * 1000);
-
-  // If this gate is already past, push to next week
   if (gateDate <= now) {
     gateDate.setDate(gateDate.getDate() + 7);
     shiftDate.setDate(shiftDate.getDate() + 7);
   }
-
   return { gateDate, shiftDate };
 }
 
@@ -651,7 +890,6 @@ function getNextGate() {
   let closest = null;
   let closestShift = null;
   let closestDay = null;
-
   DAYS.forEach((day, i) => {
     const time = schedule[day];
     if (!time) return;
@@ -662,7 +900,6 @@ function getNextGate() {
       closestDay = day;
     }
   });
-
   return { gateDate: closest, shiftDate: closestShift, day: closestDay };
 }
 
@@ -686,7 +923,6 @@ function updateCountdown() {
     return;
   }
 
-  // Reset notification flags when gate changes
   const gateKey = gateDate.getTime();
   if (gateKey !== lastNotifyGate) {
     notified5 = false;
@@ -738,7 +974,6 @@ function updateCountdown() {
     statusEl.textContent = 'Waiting for gate...';
   }
 
-  // Notifications
   if (remaining <= 300000 && remaining > 295000 && notifyEnabled && !notified5) {
     notified5 = true;
     sendNotification('5 min until gate opens!', `${fullDay} shift at ${h12}:${String(shiftM).padStart(2,'0')} ${ampm}`);
@@ -772,7 +1007,7 @@ function requestNotificationPermission() {
 
 function sendNotification(title, body) {
   if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification(title, { body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎯</text></svg>' });
+    new Notification(title, { body });
   }
 }
 
@@ -790,7 +1025,7 @@ function dO(){return!!document.querySelector('mat-dialog-container')}
 function nYA(){var c=document.querySelector('mat-dialog-container');return c&&c.textContent.includes('not yet available')}
 function fS(){var c=document.querySelector('mat-dialog-container');if(!c||c.textContent.includes('not yet available'))return null;var bs=c.querySelectorAll('button');for(var i=0;i<bs.length;i++)if(bs[i].textContent.trim()==='Submit')return bs[i];return null}
 function cD(){var c=document.querySelector('mat-dialog-container');if(!c)return;var b=c.querySelector('button.mat-icon-button');if(b){ac(b);return}document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',keyCode:27,bubbles:true}))}
-function attack(){var a=0;function go(){a++;if(a>MAX){st('Max retries — click Submit manually!','#f44');return}if(dO()){var s=fS();if(s){setTimeout(function(){ac(s);st('EARLY OUT SUBMITTED!<br><small style=color:#aaa>Attempt #'+a+'</small>');setTimeout(function(){var c2=document.querySelector('mat-dialog-container');if(c2){var bs=c2.querySelectorAll('button');for(var i=0;i<bs.length;i++){var t=bs[i].textContent.trim().toLowerCase();if(t==='ok'||t==='close'||t==='done'||t==='got it'){ac(bs[i]);break}}}},1500)},30);return}if(nYA()){st('Gate not open yet — retry #'+a,'#fa0');cD();setTimeout(function(){var l=fEO();if(l){ac(l);setTimeout(go,350)}else st('Early Out link gone','#f44')},250);return}st('Dialog loading... #'+a,'#fa0');setTimeout(go,RETRY);return}var l=fEO();if(l){ac(l);setTimeout(go,400)}else st('"Early Out" link not found!','#f44')}go()}
+function attack(){var a=0;function go(){a++;if(a>MAX){st('Max retries hit — click Submit manually!','#f44');return}if(dO()){var s=fS();if(s){setTimeout(function(){ac(s);st('EARLY OUT SUBMITTED!<br><small style=color:#aaa>Attempt #'+a+'</small>');setTimeout(function(){var c2=document.querySelector('mat-dialog-container');if(c2){var bs=c2.querySelectorAll('button');for(var i=0;i<bs.length;i++){var t=bs[i].textContent.trim().toLowerCase();if(t==='ok'||t==='close'||t==='done'||t==='got it'){ac(bs[i]);break}}}},1500)},30);return}if(nYA()){st('Gate not open yet — retry #'+a,'#fa0');cD();setTimeout(function(){var l=fEO();if(l){ac(l);setTimeout(go,350)}else st('Early Out link gone','#f44')},250);return}st('Dialog loading... #'+a,'#fa0');setTimeout(go,RETRY);return}var l=fEO();if(l){ac(l);setTimeout(go,400)}else st('"Early Out" link not found!','#f44')}go()}
 function run(){if(dO())cD();setTimeout(function(){var l=fEO();if(!l){st('"Early Out" link not found!<br><small>Click your shift first.</small>','#f44');return}st('ARMED — Gate: '+TH+':'+String(TM).padStart(2,'0')+':00 + 200ms buffer');var iv=setInterval(function(){var n=new Date(),ms=(n.getHours()*3600+n.getMinutes()*60+n.getSeconds())*1000+n.getMilliseconds(),tgt=(TH*3600+TM*60+TS)*1000+BUF,rem=tgt-ms;if(rem<=0){clearInterval(iv);st('ATTACK SEQUENCE STARTED...','#f60');attack();return}var s=Math.floor(rem/1000),mm=Math.floor(s/60),ss=s%60;if(rem<3e3)st('T-minus '+(rem/1000).toFixed(2)+'s<br><span style="color:#f33;font-size:14px;font-weight:bold">FIRING IMMINENT</span>','#f33');else if(rem<1e4)st('T-minus '+(rem/1000).toFixed(1)+'s','#f60');else st('ARMED — T-minus '+mm+':'+String(ss).padStart(2,'0'))},POLL)},500)}
 var n=new Date(),tgt=new Date();tgt.setHours(TH,TM,TS,0);
 if(n>=tgt){st('Past gate time — attacking now!','#f60');attack()}else run()
@@ -799,41 +1034,25 @@ if(n>=tgt){st('Past gate time — attacking now!','#f60');attack()}else run()
 
 function copySniperScript() {
   const { gateDate } = getNextGate();
-  if (!gateDate) {
-    showToast('No shifts scheduled!');
-    return;
-  }
-  const h = gateDate.getHours();
-  const m = gateDate.getMinutes();
-  const script = generateSniperScript(h, m);
+  if (!gateDate) { showToast('No shifts scheduled!'); return; }
+  const script = generateSniperScript(gateDate.getHours(), gateDate.getMinutes());
   copyToClipboard(script);
   showToast('Sniper script copied! Paste on CSE.');
 }
 
 function copySniperForToday() {
   const { gateDate } = getNextGate();
-  if (!gateDate) {
-    showToast('No shifts scheduled!');
-    return;
-  }
-  const h = gateDate.getHours();
-  const m = gateDate.getMinutes();
-  const script = generateSniperScript(h, m);
-  copyToClipboard(script);
+  if (!gateDate) { showToast('No shifts scheduled!'); return; }
+  const h = gateDate.getHours(), m = gateDate.getMinutes();
+  copyToClipboard(generateSniperScript(h, m));
   showToast(`Copied! Gate: ${h}:${String(m).padStart(2,'0')}`);
 }
 
 function updateBookmarklet() {
   const { gateDate } = getNextGate();
   const link = document.getElementById('bookmarklet-link');
-  if (!gateDate) {
-    link.href = '#';
-    return;
-  }
-  const h = gateDate.getHours();
-  const m = gateDate.getMinutes();
-  const script = generateSniperScript(h, m);
-  link.href = 'javascript:' + encodeURIComponent(script);
+  if (!gateDate) { link.href = '#'; return; }
+  link.href = 'javascript:' + encodeURIComponent(generateSniperScript(gateDate.getHours(), gateDate.getMinutes()));
 }
 
 // ===================== SHARE / IMPORT =====================
@@ -863,28 +1082,31 @@ function checkUrlImport() {
     }
     if (data.o) gateOffsetHours = data.o;
     saveToStorage();
-    // Clean URL
     history.replaceState({}, '', location.pathname);
     showToast('Schedule imported!');
   } catch(e) {}
 }
 
-// ===================== STORAGE =====================
+// ===================== STORAGE (per-user) =====================
+function storageKey(key) {
+  return `eo-${currentUser}-${key}`;
+}
+
 function saveToStorage() {
   try {
-    localStorage.setItem('eo-sniper-schedule', JSON.stringify(schedule));
-    localStorage.setItem('eo-sniper-offset', String(gateOffsetHours));
-    localStorage.setItem('eo-sniper-notify', JSON.stringify({ n5: notifyEnabled, n1: notify1Enabled }));
+    localStorage.setItem(storageKey('schedule'), JSON.stringify(schedule));
+    localStorage.setItem(storageKey('offset'), String(gateOffsetHours));
+    localStorage.setItem(storageKey('notify'), JSON.stringify({ n5: notifyEnabled, n1: notify1Enabled }));
   } catch(e) {}
 }
 
 function loadFromStorage() {
   try {
-    const s = localStorage.getItem('eo-sniper-schedule');
+    const s = localStorage.getItem(storageKey('schedule'));
     if (s) schedule = JSON.parse(s);
-    const o = localStorage.getItem('eo-sniper-offset');
+    const o = localStorage.getItem(storageKey('offset'));
     if (o) gateOffsetHours = parseFloat(o);
-    const n = localStorage.getItem('eo-sniper-notify');
+    const n = localStorage.getItem(storageKey('notify'));
     if (n) {
       const parsed = JSON.parse(n);
       notifyEnabled = !!parsed.n5;
@@ -919,8 +1141,19 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// ===================== START =====================
-init();
+// ===================== BOOT =====================
+// Allow Enter key on login
+document.getElementById('login-pass').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') doLogin();
+});
+document.getElementById('login-user').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('login-pass').focus();
+});
+
+// Check for existing session
+checkSession().then(valid => {
+  if (valid) showApp();
+});
 </script>
 </body>
 </html>
