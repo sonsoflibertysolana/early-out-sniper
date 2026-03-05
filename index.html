@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a1a">
+<title>Early Out Sniper v6</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 100%);
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 16px;
+    padding-bottom: 80px;
+  }
+  h1 {
+    color: #00ff41;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #555;
+    font-size: 11px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(0,255,65,0.15);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    color: #00ff41;
+    font-size: 13px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .day-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .day-label {
+    width: 42px;
+    font-size: 12px;
+    color: #aaa;
+    flex-shrink: 0;
+  }
+  .day-row input[type="time"] {
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    flex: 1;
+    min-width: 0;
+  }
+  .day-row input[type="time"]:focus {
+    border-color: #00ff41;
+    outline: none;
+  }
+  .day-row .gate-time {
+    font-size: 11px;
+    color: #ffaa00;
+    width: 70px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .off-toggle {
+    background: #222;
+    border: 1px solid #444;
+    color: #888;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .off-toggle.active {
+    background: #331111;
+    border-color: #ff4444;
+    color: #ff4444;
+  }
+  .countdown-box {
+    text-align: center;
+    padding: 24px 16px;
+  }
+  .countdown-box .next-label {
+    color: #888;
+    font-size: 11px;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .countdown-box .next-day {
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .countdown-box .next-shift {
+    color: #aaa;
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .countdown-box .timer {
+    font-size: 36px;
+    font-weight: bold;
+    color: #00ff41;
+    letter-spacing: 2px;
+  }
+  .countdown-box .timer.soon { color: #ffaa00; }
+  .countdown-box .timer.imminent { color: #ff3333; animation: pulse 0.5s infinite alternate; }
+  .countdown-box .status {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #888;
+  }
+  @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+
+  .btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #00cc33, #00ff41);
+    color: #000;
+  }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.08);
+    color: #00ff41;
+    border: 1px solid rgba(0,255,65,0.3);
+  }
+  .btn-secondary:active { transform: scale(0.98); }
+
+  .instructions {
+    font-size: 11px;
+    color: #777;
+    line-height: 1.6;
+  }
+  .instructions ol { padding-left: 20px; }
+  .instructions li { margin-bottom: 6px; }
+  .instructions code {
+    background: rgba(0,255,65,0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #00ff41;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #00ff41;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+    z-index: 9999;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+    border-radius: 6px;
+    letter-spacing: 1px;
+  }
+  .tab.active {
+    background: rgba(0,255,65,0.15);
+    color: #00ff41;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .notify-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .notify-toggle label { font-size: 12px; color: #aaa; }
+  .switch {
+    width: 44px; height: 24px;
+    background: #333;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .switch.on { background: #00cc33; }
+  .switch::after {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px; left: 2px;
+    transition: left 0.2s;
+  }
+  .switch.on::after { left: 22px; }
+
+  .share-link {
+    background: #111;
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    word-break: break-all;
+    margin: 8px 0;
+  }
+
+  .preset-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .preset-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid #333;
+    color: #aaa;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .preset-btn:active { border-color: #00ff41; color: #00ff41; }
+
+  /* Bookmarklet display */
+  .bookmarklet-area {
+    background: #0a0a0a;
+    border: 1px dashed #333;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 12px 0;
+    text-align: center;
+  }
+  .bookmarklet-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #00cc33, #00ff41);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+  }
+  .bookmarklet-hint {
+    font-size: 10px;
+    color: #555;
+    margin-top: 8px;
+  }
+
+  .gate-offset-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .gate-offset-row label {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .gate-offset-row select {
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<h1>EARLY OUT SNIPER v6</h1>
+<div class="subtitle">TWIN RIVER / BALLY'S</div>
+
+<div class="tab-bar">
+  <div class="tab active" data-tab="schedule">SCHEDULE</div>
+  <div class="tab" data-tab="sniper">SNIPER</div>
+  <div class="tab" data-tab="howto">HOW TO</div>
+</div>
+
+<!-- ===================== SCHEDULE TAB ===================== -->
+<div class="page active" id="page-schedule">
+  <div class="card">
+    <h2>GATE OPENS BEFORE SHIFT</h2>
+    <div class="gate-offset-row">
+      <label>Hours before shift:</label>
+      <select id="gate-offset">
+        <option value="1">1 hour</option>
+        <option value="1.5">1.5 hours</option>
+        <option value="2" selected>2 hours</option>
+        <option value="2.5">2.5 hours</option>
+        <option value="3">3 hours</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>WEEKLY SCHEDULE</h2>
+    <div class="preset-row">
+      <button class="preset-btn" onclick="applyPreset('day')">Day (10a)</button>
+      <button class="preset-btn" onclick="applyPreset('swing')">Swing (6p)</button>
+      <button class="preset-btn" onclick="applyPreset('grave')">Grave (2a)</button>
+      <button class="preset-btn" onclick="applyPreset('clear')">Clear All</button>
+    </div>
+    <div id="schedule-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>SHARE SCHEDULE</h2>
+    <button class="btn btn-secondary" onclick="exportSchedule()">COPY SHARE LINK</button>
+    <div class="instructions" style="margin-top:8px;">
+      Share a link with your schedule pre-loaded so your friends can use it instantly.
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SNIPER TAB ===================== -->
+<div class="page" id="page-sniper">
+  <div class="card countdown-box" id="countdown-area">
+    <div class="next-label">NEXT GATE OPENS</div>
+    <div class="next-day" id="next-day">--</div>
+    <div class="next-shift" id="next-shift">No shifts scheduled</div>
+    <div class="timer" id="timer">--:--:--</div>
+    <div class="status" id="sniper-status">Configure schedule first</div>
+  </div>
+
+  <button class="btn btn-primary" onclick="copySniperScript()">COPY SNIPER SCRIPT</button>
+  <button class="btn btn-secondary" onclick="copySniperForToday()">COPY FOR NEXT GATE ONLY</button>
+
+  <div class="bookmarklet-area">
+    <a class="bookmarklet-link" id="bookmarklet-link" href="#">Sniper v6</a>
+    <div class="bookmarklet-hint">
+      Desktop: drag this to your bookmarks bar<br>
+      Mobile: see "How To" tab for instructions
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="notify-toggle">
+      <label>Notify 5 min before gate</label>
+      <div class="switch" id="notify-switch" onclick="toggleNotify()"></div>
+    </div>
+    <div class="notify-toggle">
+      <label>Notify 1 min before gate</label>
+      <div class="switch on" id="notify-1min-switch" onclick="toggleNotify1()"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== HOW TO TAB ===================== -->
+<div class="page" id="page-howto">
+  <div class="card">
+    <h2>DESKTOP (EASIEST)</h2>
+    <div class="instructions">
+      <ol>
+        <li>Enter your weekly shifts in the <strong>Schedule</strong> tab</li>
+        <li>Go to the <strong>Sniper</strong> tab when it's close to gate time</li>
+        <li>Click <code>COPY SNIPER SCRIPT</code></li>
+        <li>Open <strong>Casino Schedule Ease</strong> in another tab</li>
+        <li>Navigate to <strong>My Schedule</strong> and click your shift so "Early Out" is visible</li>
+        <li>Press <code>F12</code> > Console tab > type <code>allow pasting</code> > Enter</li>
+        <li>Paste the script > Enter</li>
+        <li>The sniper arms automatically and fires at the right time</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>IPHONE (SAFARI)</h2>
+    <div class="instructions">
+      <ol>
+        <li>Add this page to your Home Screen (Share > Add to Home Screen)</li>
+        <li>Enter your schedule</li>
+        <li>When the countdown is close, open <strong>Safari</strong></li>
+        <li>Go to Casino Schedule Ease > My Schedule > click your shift</li>
+        <li>Go to the <strong>Sniper</strong> tab and tap <code>COPY SNIPER SCRIPT</code></li>
+        <li>In Safari's address bar, type <code>javascript:</code> then paste the script</li>
+        <li><strong>Alternative:</strong> Create a bookmarklet:
+          <ol>
+            <li>Bookmark any page in Safari</li>
+            <li>Edit the bookmark</li>
+            <li>Replace the URL with the script from <code>COPY SNIPER SCRIPT</code></li>
+            <li>When on the CSE page, tap that bookmark to fire</li>
+          </ol>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ANDROID (CHROME / KIWI)</h2>
+    <div class="instructions">
+      <ol>
+        <li>Add this page to your Home Screen (Menu > Add to Home screen)</li>
+        <li>Enter your schedule</li>
+        <li><strong>Kiwi Browser</strong> (recommended): supports Tampermonkey extension for automatic execution</li>
+        <li><strong>Chrome</strong>: Use the bookmarklet method:
+          <ol>
+            <li>Tap <code>COPY SNIPER SCRIPT</code></li>
+            <li>On CSE page, tap the address bar</li>
+            <li>Type <code>javascript:</code> then paste</li>
+            <li>Chrome may strip <code>javascript:</code> prefix — you'll need to retype it</li>
+          </ol>
+        </li>
+        <li><strong>Firefox</strong>: Address bar method works. Type <code>javascript:</code> then paste.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>SHARING WITH FRIENDS</h2>
+    <div class="instructions">
+      <ol>
+        <li>Set up your schedule</li>
+        <li>Go to <strong>Schedule</strong> tab > <code>COPY SHARE LINK</code></li>
+        <li>Send the link to your friend</li>
+        <li>They open it and the schedule is pre-loaded</li>
+        <li>They can modify it for their own shifts</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>TIPS</h2>
+    <div class="instructions">
+      <ol>
+        <li>The script auto-detects the correct fire time based on your schedule</li>
+        <li>If you're already past the gate time, it fires immediately</li>
+        <li>200ms buffer is built in so the server has time to open the gate</li>
+        <li>If "not yet available" appears, the script auto-retries (close > reopen loop)</li>
+        <li>Max 100 retries (~30 seconds) before it gives up</li>
+        <li>Make sure your shift is clicked/expanded so "Early Out" link is visible BEFORE the script runs</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== STATE =====================
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAY_NAMES = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+let schedule = {}; // { Mon: "10:00", Tue: null, ... }
+let gateOffsetHours = 2;
+let notifyEnabled = false;
+let notify1Enabled = true;
+let countdownInterval = null;
+
+// ===================== INIT =====================
+function init() {
+  loadFromStorage();
+  checkUrlImport();
+  buildScheduleGrid();
+  setupTabs();
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown, 200);
+  updateBookmarklet();
+
+  document.getElementById('gate-offset').value = String(gateOffsetHours);
+  document.getElementById('gate-offset').addEventListener('change', (e) => {
+    gateOffsetHours = parseFloat(e.target.value);
+    saveToStorage();
+    buildScheduleGrid();
+    updateCountdown();
+    updateBookmarklet();
+  });
+
+  if (notifyEnabled) document.getElementById('notify-switch').classList.add('on');
+  if (notify1Enabled) document.getElementById('notify-1min-switch').classList.add('on');
+}
+
+// ===================== TABS =====================
+function setupTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('page-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+}
+
+// ===================== SCHEDULE GRID =====================
+function buildScheduleGrid() {
+  const grid = document.getElementById('schedule-grid');
+  grid.innerHTML = '';
+  DAYS.forEach(day => {
+    const row = document.createElement('div');
+    row.className = 'day-row';
+
+    const label = document.createElement('div');
+    label.className = 'day-label';
+    label.textContent = day;
+
+    const input = document.createElement('input');
+    input.type = 'time';
+    input.value = schedule[day] || '';
+    input.disabled = schedule[day] === null;
+    input.addEventListener('change', () => {
+      schedule[day] = input.value || undefined;
+      saveToStorage();
+      updateGateDisplay(day, gate);
+      updateCountdown();
+      updateBookmarklet();
+    });
+
+    const offBtn = document.createElement('button');
+    offBtn.className = 'off-toggle' + (schedule[day] === null ? ' active' : '');
+    offBtn.textContent = 'OFF';
+    offBtn.addEventListener('click', () => {
+      if (schedule[day] === null) {
+        schedule[day] = undefined;
+        offBtn.classList.remove('active');
+        input.disabled = false;
+      } else {
+        schedule[day] = null;
+        input.value = '';
+        offBtn.classList.add('active');
+        input.disabled = true;
+      }
+      saveToStorage();
+      updateGateDisplay(day, gate);
+      updateCountdown();
+      updateBookmarklet();
+    });
+
+    const gate = document.createElement('div');
+    gate.className = 'gate-time';
+    updateGateDisplay(day, gate);
+
+    row.appendChild(label);
+    row.appendChild(input);
+    row.appendChild(offBtn);
+    row.appendChild(gate);
+    grid.appendChild(row);
+  });
+}
+
+function updateGateDisplay(day, el) {
+  const time = schedule[day];
+  if (!time) { el.textContent = ''; return; }
+  const gate = calcGateTime(time);
+  el.textContent = 'Gate ' + gate;
+}
+
+function calcGateTime(shiftTime) {
+  const [h, m] = shiftTime.split(':').map(Number);
+  let totalMin = h * 60 + m - (gateOffsetHours * 60);
+  if (totalMin < 0) totalMin += 24 * 60;
+  const gh = Math.floor(totalMin / 60) % 24;
+  const gm = totalMin % 60;
+  const ampm = gh >= 12 ? 'PM' : 'AM';
+  const h12 = gh === 0 ? 12 : gh > 12 ? gh - 12 : gh;
+  return h12 + ':' + String(gm).padStart(2, '0') + ampm;
+}
+
+function calcGateDate(shiftTime, dayOfWeek) {
+  const now = new Date();
+  const [h, m] = shiftTime.split(':').map(Number);
+
+  // dayOfWeek: 0=Mon ... 6=Sun
+  // JS getDay: 0=Sun ... 6=Sat
+  const jsDow = now.getDay();
+  const currentDow = jsDow === 0 ? 6 : jsDow - 1; // convert to Mon=0
+
+  let daysAhead = dayOfWeek - currentDow;
+  if (daysAhead < 0) daysAhead += 7;
+
+  const shiftDate = new Date(now);
+  shiftDate.setDate(shiftDate.getDate() + daysAhead);
+  shiftDate.setHours(h, m, 0, 0);
+
+  const gateDate = new Date(shiftDate.getTime() - gateOffsetHours * 60 * 60 * 1000);
+
+  // If this gate is already past, push to next week
+  if (gateDate <= now) {
+    gateDate.setDate(gateDate.getDate() + 7);
+    shiftDate.setDate(shiftDate.getDate() + 7);
+  }
+
+  return { gateDate, shiftDate };
+}
+
+// ===================== PRESETS =====================
+function applyPreset(type) {
+  DAYS.forEach(day => {
+    if (type === 'day') schedule[day] = '10:00';
+    else if (type === 'swing') schedule[day] = '18:00';
+    else if (type === 'grave') schedule[day] = '02:00';
+    else if (type === 'clear') schedule[day] = undefined;
+  });
+  saveToStorage();
+  buildScheduleGrid();
+  updateCountdown();
+  updateBookmarklet();
+}
+
+// ===================== COUNTDOWN =====================
+function getNextGate() {
+  let closest = null;
+  let closestShift = null;
+  let closestDay = null;
+
+  DAYS.forEach((day, i) => {
+    const time = schedule[day];
+    if (!time) return;
+    const { gateDate, shiftDate } = calcGateDate(time, i);
+    if (!closest || gateDate < closest) {
+      closest = gateDate;
+      closestShift = shiftDate;
+      closestDay = day;
+    }
+  });
+
+  return { gateDate: closest, shiftDate: closestShift, day: closestDay };
+}
+
+let notified5 = false;
+let notified1 = false;
+let lastNotifyGate = null;
+
+function updateCountdown() {
+  const { gateDate, shiftDate, day } = getNextGate();
+  const dayEl = document.getElementById('next-day');
+  const shiftEl = document.getElementById('next-shift');
+  const timerEl = document.getElementById('timer');
+  const statusEl = document.getElementById('sniper-status');
+
+  if (!gateDate) {
+    dayEl.textContent = '--';
+    shiftEl.textContent = 'No shifts scheduled';
+    timerEl.textContent = '--:--:--';
+    timerEl.className = 'timer';
+    statusEl.textContent = 'Add shifts in Schedule tab';
+    return;
+  }
+
+  // Reset notification flags when gate changes
+  const gateKey = gateDate.getTime();
+  if (gateKey !== lastNotifyGate) {
+    notified5 = false;
+    notified1 = false;
+    lastNotifyGate = gateKey;
+  }
+
+  const fullDay = DAY_NAMES[DAYS.indexOf(day)];
+  dayEl.textContent = fullDay;
+
+  const shiftH = shiftDate.getHours();
+  const shiftM = shiftDate.getMinutes();
+  const ampm = shiftH >= 12 ? 'PM' : 'AM';
+  const h12 = shiftH === 0 ? 12 : shiftH > 12 ? shiftH - 12 : shiftH;
+  shiftEl.textContent = `Shift: ${h12}:${String(shiftM).padStart(2,'0')} ${ampm} | Gate: ${calcGateTime(schedule[day])}`;
+
+  const now = new Date();
+  const remaining = gateDate - now;
+
+  if (remaining <= 0) {
+    timerEl.textContent = 'GATE OPEN!';
+    timerEl.className = 'timer imminent';
+    statusEl.textContent = 'Copy the sniper script and paste it on CSE NOW!';
+    return;
+  }
+
+  const totalSec = Math.floor(remaining / 1000);
+  const hrs = Math.floor(totalSec / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+
+  if (hrs > 0) {
+    timerEl.textContent = `${hrs}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+  } else {
+    timerEl.textContent = `${mins}:${String(secs).padStart(2,'0')}`;
+  }
+
+  if (remaining < 10000) {
+    timerEl.className = 'timer imminent';
+    statusEl.textContent = 'GET READY! Paste script on CSE page NOW!';
+  } else if (remaining < 60000) {
+    timerEl.className = 'timer soon';
+    statusEl.textContent = 'Almost time! Have CSE open and ready.';
+  } else if (remaining < 300000) {
+    timerEl.className = 'timer soon';
+    statusEl.textContent = 'Open CSE and click your shift soon.';
+  } else {
+    timerEl.className = 'timer';
+    statusEl.textContent = 'Waiting for gate...';
+  }
+
+  // Notifications
+  if (remaining <= 300000 && remaining > 295000 && notifyEnabled && !notified5) {
+    notified5 = true;
+    sendNotification('5 min until gate opens!', `${fullDay} shift at ${h12}:${String(shiftM).padStart(2,'0')} ${ampm}`);
+  }
+  if (remaining <= 60000 && remaining > 55000 && notify1Enabled && !notified1) {
+    notified1 = true;
+    sendNotification('1 min until gate opens!', 'Open CSE and paste the sniper script NOW!');
+  }
+}
+
+// ===================== NOTIFICATIONS =====================
+function toggleNotify() {
+  notifyEnabled = !notifyEnabled;
+  document.getElementById('notify-switch').classList.toggle('on', notifyEnabled);
+  if (notifyEnabled) requestNotificationPermission();
+  saveToStorage();
+}
+
+function toggleNotify1() {
+  notify1Enabled = !notify1Enabled;
+  document.getElementById('notify-1min-switch').classList.toggle('on', notify1Enabled);
+  if (notify1Enabled) requestNotificationPermission();
+  saveToStorage();
+}
+
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendNotification(title, body) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🎯</text></svg>' });
+  }
+}
+
+// ===================== SNIPER SCRIPT GENERATOR =====================
+function generateSniperScript(targetHour, targetMin) {
+  return `(function(){
+'use strict';
+var TH=${targetHour},TM=${targetMin},TS=0,BUF=200,POLL=20,RETRY=300,MAX=100;
+var ov=document.createElement('div');ov.style.cssText='position:fixed;top:10px;right:10px;z-index:999999;background:linear-gradient(135deg,#0a0a1a,#1a1a3e);color:#0f0;font-family:monospace;padding:16px 22px;border-radius:10px;font-size:13px;border:1px solid #0f0;box-shadow:0 0 25px rgba(0,255,65,.2);min-width:320px;backdrop-filter:blur(10px)';
+document.body.appendChild(ov);
+function st(m,c){c=c||'#0f0';var n=new Date();var t=n.toLocaleTimeString('en-US',{hour12:false})+'.'+String(n.getMilliseconds()).padStart(3,'0');ov.innerHTML='<div style="font-size:10px;color:#555;margin-bottom:4px;letter-spacing:2px">EARLY OUT SNIPER v6</div><div style="font-size:20px;color:#fff;margin-bottom:8px;font-weight:bold">'+t+'</div><div style="color:'+c+';font-size:12px;line-height:1.4">'+m+'</div>'}
+function ac(e){if(!e)return false;var r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,o={bubbles:true,cancelable:true,clientX:x,clientY:y,view:window};e.dispatchEvent(new MouseEvent('mousedown',o));e.dispatchEvent(new MouseEvent('mouseup',o));e.dispatchEvent(new MouseEvent('click',o));e.click();return true}
+function fEO(){var ls=document.querySelectorAll('a[href="#"]');for(var i=0;i<ls.length;i++)if(ls[i].textContent.trim()==='Early Out')return ls[i];return null}
+function dO(){return!!document.querySelector('mat-dialog-container')}
+function nYA(){var c=document.querySelector('mat-dialog-container');return c&&c.textContent.includes('not yet available')}
+function fS(){var c=document.querySelector('mat-dialog-container');if(!c||c.textContent.includes('not yet available'))return null;var bs=c.querySelectorAll('button');for(var i=0;i<bs.length;i++)if(bs[i].textContent.trim()==='Submit')return bs[i];return null}
+function cD(){var c=document.querySelector('mat-dialog-container');if(!c)return;var b=c.querySelector('button.mat-icon-button');if(b){ac(b);return}document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',keyCode:27,bubbles:true}))}
+function attack(){var a=0;function go(){a++;if(a>MAX){st('Max retries — click Submit manually!','#f44');return}if(dO()){var s=fS();if(s){setTimeout(function(){ac(s);st('EARLY OUT SUBMITTED!<br><small style=color:#aaa>Attempt #'+a+'</small>');setTimeout(function(){var c2=document.querySelector('mat-dialog-container');if(c2){var bs=c2.querySelectorAll('button');for(var i=0;i<bs.length;i++){var t=bs[i].textContent.trim().toLowerCase();if(t==='ok'||t==='close'||t==='done'||t==='got it'){ac(bs[i]);break}}}},1500)},30);return}if(nYA()){st('Gate not open yet — retry #'+a,'#fa0');cD();setTimeout(function(){var l=fEO();if(l){ac(l);setTimeout(go,350)}else st('Early Out link gone','#f44')},250);return}st('Dialog loading... #'+a,'#fa0');setTimeout(go,RETRY);return}var l=fEO();if(l){ac(l);setTimeout(go,400)}else st('"Early Out" link not found!','#f44')}go()}
+function run(){if(dO())cD();setTimeout(function(){var l=fEO();if(!l){st('"Early Out" link not found!<br><small>Click your shift first.</small>','#f44');return}st('ARMED — Gate: '+TH+':'+String(TM).padStart(2,'0')+':00 + 200ms buffer');var iv=setInterval(function(){var n=new Date(),ms=(n.getHours()*3600+n.getMinutes()*60+n.getSeconds())*1000+n.getMilliseconds(),tgt=(TH*3600+TM*60+TS)*1000+BUF,rem=tgt-ms;if(rem<=0){clearInterval(iv);st('ATTACK SEQUENCE STARTED...','#f60');attack();return}var s=Math.floor(rem/1000),mm=Math.floor(s/60),ss=s%60;if(rem<3e3)st('T-minus '+(rem/1000).toFixed(2)+'s<br><span style="color:#f33;font-size:14px;font-weight:bold">FIRING IMMINENT</span>','#f33');else if(rem<1e4)st('T-minus '+(rem/1000).toFixed(1)+'s','#f60');else st('ARMED — T-minus '+mm+':'+String(ss).padStart(2,'0'))},POLL)},500)}
+var n=new Date(),tgt=new Date();tgt.setHours(TH,TM,TS,0);
+if(n>=tgt){st('Past gate time — attacking now!','#f60');attack()}else run()
+})();`;
+}
+
+function copySniperScript() {
+  const { gateDate } = getNextGate();
+  if (!gateDate) {
+    showToast('No shifts scheduled!');
+    return;
+  }
+  const h = gateDate.getHours();
+  const m = gateDate.getMinutes();
+  const script = generateSniperScript(h, m);
+  copyToClipboard(script);
+  showToast('Sniper script copied! Paste on CSE.');
+}
+
+function copySniperForToday() {
+  const { gateDate } = getNextGate();
+  if (!gateDate) {
+    showToast('No shifts scheduled!');
+    return;
+  }
+  const h = gateDate.getHours();
+  const m = gateDate.getMinutes();
+  const script = generateSniperScript(h, m);
+  copyToClipboard(script);
+  showToast(`Copied! Gate: ${h}:${String(m).padStart(2,'0')}`);
+}
+
+function updateBookmarklet() {
+  const { gateDate } = getNextGate();
+  const link = document.getElementById('bookmarklet-link');
+  if (!gateDate) {
+    link.href = '#';
+    return;
+  }
+  const h = gateDate.getHours();
+  const m = gateDate.getMinutes();
+  const script = generateSniperScript(h, m);
+  link.href = 'javascript:' + encodeURIComponent(script);
+}
+
+// ===================== SHARE / IMPORT =====================
+function exportSchedule() {
+  const data = { s: {}, o: gateOffsetHours };
+  DAYS.forEach(day => {
+    if (schedule[day]) data.s[day] = schedule[day];
+    else if (schedule[day] === null) data.s[day] = 'OFF';
+  });
+  const encoded = btoa(JSON.stringify(data));
+  const url = location.origin + location.pathname + '?d=' + encoded;
+  copyToClipboard(url);
+  showToast('Share link copied!');
+}
+
+function checkUrlImport() {
+  const params = new URLSearchParams(location.search);
+  const d = params.get('d');
+  if (!d) return;
+  try {
+    const data = JSON.parse(atob(d));
+    if (data.s) {
+      DAYS.forEach(day => {
+        if (data.s[day] === 'OFF') schedule[day] = null;
+        else if (data.s[day]) schedule[day] = data.s[day];
+      });
+    }
+    if (data.o) gateOffsetHours = data.o;
+    saveToStorage();
+    // Clean URL
+    history.replaceState({}, '', location.pathname);
+    showToast('Schedule imported!');
+  } catch(e) {}
+}
+
+// ===================== STORAGE =====================
+function saveToStorage() {
+  try {
+    localStorage.setItem('eo-sniper-schedule', JSON.stringify(schedule));
+    localStorage.setItem('eo-sniper-offset', String(gateOffsetHours));
+    localStorage.setItem('eo-sniper-notify', JSON.stringify({ n5: notifyEnabled, n1: notify1Enabled }));
+  } catch(e) {}
+}
+
+function loadFromStorage() {
+  try {
+    const s = localStorage.getItem('eo-sniper-schedule');
+    if (s) schedule = JSON.parse(s);
+    const o = localStorage.getItem('eo-sniper-offset');
+    if (o) gateOffsetHours = parseFloat(o);
+    const n = localStorage.getItem('eo-sniper-notify');
+    if (n) {
+      const parsed = JSON.parse(n);
+      notifyEnabled = !!parsed.n5;
+      notify1Enabled = parsed.n1 !== false;
+    }
+  } catch(e) {}
+}
+
+// ===================== UTIL =====================
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;top:-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===================== START =====================
+init();
+</script>
+</body>
+</html>
