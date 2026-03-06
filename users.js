@@ -16,5 +16,5 @@
 const ALLOWED_USERS = [
   { username: "admin", hash: "620fd759d370c40d9c245b765cf48ebf63b4fb11b8c6adfd2ce6c6c9aac2be78" },
 
-  // Example: { username: "john", hash: "abc123..." },
+  { username: "kris", hash: "6025682e5d2deeba3c2ccb38b002ebc0070c1a6ee96f43b31b6d11bb5ad06f61" },
 ];
