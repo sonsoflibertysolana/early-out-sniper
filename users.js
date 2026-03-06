@@ -17,4 +17,5 @@ const ALLOWED_USERS = [
   { username: "admin", hash: "620fd759d370c40d9c245b765cf48ebf63b4fb11b8c6adfd2ce6c6c9aac2be78" },
 
   { username: "kris", hash: "6025682e5d2deeba3c2ccb38b002ebc0070c1a6ee96f43b31b6d11bb5ad06f61" },
+  { username: "will", hash: "03a7049c4570c2f76cb504336f5f482174200a584c119a3f08b654b5b45162b5" },
 ];
