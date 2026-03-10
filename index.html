@@ -256,9 +256,16 @@ function scrapeShifts(){
     var tm=text.match(/(\\d{1,2}:\\d{2})(AM|PM)/gi);
     if(!tm||isOff)continue;
     var mainTime=null;
-    var hMatch=text.match(/(\\d{1,2}:\\d{2})(AM|PM)\\s*\\((\\d+\\.?\\d*)\\s*hours?\\)/gi);
-    if(hMatch){for(var j=0;j<hMatch.length;j++){var hm=hMatch[j].match(/(\\d+\\.?\\d*)\\s*hours?/);if(hm&&parseFloat(hm[1])>=4){var tmm=hMatch[j].match(/(\\d{1,2}:\\d{2})(AM|PM)/i);if(tmm){mainTime=tmm[1]+' '+tmm[2];break}}}}
-    if(!mainTime){var firstT=text.match(/(\\d{1,2}:\\d{2})(AM|PM)/i);if(firstT)mainTime=firstT[1]+' '+firstT[2]}
+    /* Extract time that comes BEFORE "(X hours)" — the actual shift start */
+    var cleanText=text.replace(/\\(\\d+\\.?\\d*\\s*hours?\\)/gi,'').replace(/\\(\\d+\\.?\\d*\\)/g,'');
+    var timeMatches=cleanText.match(/(\\d{1,2}:\\d{2})\\s*(AM|PM)/gi);
+    if(timeMatches&&timeMatches.length>0){
+      /* Use the first valid time that looks like a shift start (skip durations) */
+      for(var j=0;j<timeMatches.length;j++){
+        var tmm=timeMatches[j].match(/(\\d{1,2}:\\d{2})\\s*(AM|PM)/i);
+        if(tmm){mainTime=tmm[1]+' '+tmm[2];break}
+      }
+    }
     if(!mainTime)continue;
     var dateStr=year+'-'+String(monthIdx+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
     result.push({day:day,dow:dow,date:dateStr,time:mainTime,el:cells[i]});
