@@ -6,85 +6,40 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0a0a1a">
-<title>EO Sniper v7</title>
+<title>EO Sniper v8</title>
 <link rel="manifest" href="manifest.json">
 <script src="users.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Courier New',monospace;background:linear-gradient(135deg,#0a0a1a 0%,#1a1a3e 100%);color:#e0e0e0;min-height:100vh;padding:16px;padding-bottom:80px;-webkit-user-select:none;user-select:none}
-h1{color:#00ff41;font-size:18px;text-align:center;margin-bottom:4px;letter-spacing:1px}
-.subtitle{text-align:center;color:#555;font-size:11px;margin-bottom:20px;letter-spacing:2px}
+h1{color:#00ff41;font-size:20px;text-align:center;margin-bottom:4px;letter-spacing:1px}
+.subtitle{text-align:center;color:#555;font-size:11px;margin-bottom:24px;letter-spacing:2px}
 .card{background:rgba(255,255,255,0.04);border:1px solid rgba(0,255,65,0.15);border-radius:12px;padding:16px;margin-bottom:16px}
 .card h2{color:#00ff41;font-size:13px;margin-bottom:12px;letter-spacing:1px}
-.day-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
-.day-label{width:42px;font-size:13px;color:#aaa;flex-shrink:0;font-weight:bold}
-.time-display{flex:1;background:#111;border:1px solid #333;color:#fff;padding:10px 14px;border-radius:8px;font-family:'Courier New',monospace;font-size:16px;text-align:center;cursor:pointer;letter-spacing:1px}
-.time-display:active{border-color:#00ff41}
-.time-display.off{color:#ff4444;font-size:13px;border-color:#331111;background:#1a0a0a}
-.time-display.empty{color:#444;font-size:13px}
-.gate-badge{font-size:10px;color:#ffaa00;width:72px;text-align:right;flex-shrink:0}
-.off-toggle{background:#222;border:1px solid #444;color:#888;padding:8px 10px;border-radius:6px;font-family:'Courier New',monospace;font-size:11px;cursor:pointer;flex-shrink:0}
-.off-toggle.active{background:#331111;border-color:#ff4444;color:#ff4444}
-.picker-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:10000;justify-content:center;align-items:flex-end}
-.picker-overlay.open{display:flex}
-.picker-sheet{background:linear-gradient(180deg,#1a1a3e 0%,#0a0a1a 100%);border-top:1px solid rgba(0,255,65,0.3);border-radius:20px 20px 0 0;width:100%;max-width:420px;padding:20px 16px 32px}
-.picker-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.picker-header .picker-title{color:#fff;font-size:14px;font-weight:bold}
-.picker-header button{background:none;border:none;font-family:'Courier New',monospace;font-size:14px;font-weight:bold;cursor:pointer;padding:6px 14px}
-.picker-cancel{color:#888}.picker-done{color:#00ff41}
-.picker-wheels{display:flex;justify-content:center;gap:4px;height:200px;position:relative;overflow:hidden}
-.picker-wheels::before,.picker-wheels::after{content:'';position:absolute;left:0;right:0;height:80px;z-index:2;pointer-events:none}
-.picker-wheels::before{top:0;background:linear-gradient(180deg,#0e0e28 0%,transparent 100%)}
-.picker-wheels::after{bottom:0;background:linear-gradient(0deg,#0e0e28 0%,transparent 100%)}
-.picker-highlight{position:absolute;top:50%;left:8px;right:8px;height:40px;transform:translateY(-50%);border-top:1px solid rgba(0,255,65,0.3);border-bottom:1px solid rgba(0,255,65,0.3);background:rgba(0,255,65,0.05);border-radius:6px;z-index:1;pointer-events:none}
-.wheel{position:relative;z-index:3;overflow:hidden;touch-action:none}
-.wheel-hour{width:70px}.wheel-colon{width:16px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:bold;z-index:3}.wheel-min{width:70px}.wheel-ampm{width:70px}
-.wheel-track{transition:transform 0.3s cubic-bezier(0.2,0.8,0.3,1)}
-.wheel-item{height:40px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#555;font-weight:bold;cursor:pointer}
-.wheel-item.selected{color:#fff}
-.btn{display:block;width:100%;padding:14px;border:none;border-radius:8px;font-family:'Courier New',monospace;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:8px;letter-spacing:1px}
+.btn{display:block;width:100%;padding:16px;border:none;border-radius:10px;font-family:'Courier New',monospace;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:10px;letter-spacing:1px;transition:transform 0.1s}
 .btn-primary{background:linear-gradient(135deg,#00cc33,#00ff41);color:#000}
-.btn-primary:active{transform:scale(0.98)}
+.btn-primary:active{transform:scale(0.97)}
 .btn-secondary{background:rgba(255,255,255,0.08);color:#00ff41;border:1px solid rgba(0,255,65,0.3)}
-.btn-secondary:active{transform:scale(0.98)}
-.tab-bar{display:flex;gap:4px;margin-bottom:16px;background:rgba(255,255,255,0.04);border-radius:8px;padding:4px}
-.tab{flex:1;text-align:center;padding:10px;font-size:12px;color:#888;cursor:pointer;border-radius:6px;letter-spacing:1px}
-.tab.active{background:rgba(0,255,65,0.15);color:#00ff41}
-.page{display:none}.page.active{display:block}
-.countdown-box{text-align:center;padding:24px 16px}
-.countdown-box .next-label{color:#888;font-size:11px;letter-spacing:2px;margin-bottom:8px}
-.countdown-box .next-day{color:#fff;font-size:16px;font-weight:bold;margin-bottom:4px}
-.countdown-box .next-shift{color:#aaa;font-size:12px;margin-bottom:16px}
-.countdown-box .timer{font-size:36px;font-weight:bold;color:#00ff41;letter-spacing:2px}
-.countdown-box .timer.soon{color:#ffaa00}
-.countdown-box .timer.imminent{color:#ff3333;animation:pulse 0.5s infinite alternate}
-.countdown-box .status{margin-top:12px;font-size:12px;color:#888}
-@keyframes pulse{from{opacity:1}to{opacity:0.4}}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#00ff41;color:#000;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:bold;transition:transform 0.3s ease;z-index:9999}
-.toast.show{transform:translateX(-50%) translateY(0)}
-.notify-toggle{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.notify-toggle label{font-size:12px;color:#aaa}
-.switch{width:44px;height:24px;background:#333;border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s}
-.switch.on{background:#00cc33}
-.switch::after{content:'';position:absolute;width:20px;height:20px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left 0.2s}
-.switch.on::after{left:22px}
-.bookmarklet-area{background:#0a0a0a;border:1px dashed #333;border-radius:8px;padding:12px;margin:12px 0;text-align:center}
-.bookmarklet-link{display:inline-block;background:linear-gradient(135deg,#00cc33,#00ff41);color:#000;padding:10px 20px;border-radius:8px;font-weight:bold;font-size:13px;text-decoration:none;font-family:'Courier New',monospace}
-.bookmarklet-hint{font-size:10px;color:#555;margin-top:8px}
-.instructions{font-size:11px;color:#777;line-height:1.6}
-.instructions ol{padding-left:20px}
-.instructions li{margin-bottom:6px}
-.instructions code{background:rgba(0,255,65,0.1);padding:1px 4px;border-radius:3px;color:#00ff41}
-.logged-in-as{text-align:center;color:#555;font-size:10px;margin-bottom:12px}
+.btn-secondary:active{transform:scale(0.97)}
+.logged-in-as{text-align:center;color:#555;font-size:10px;margin-bottom:16px}
 .logged-in-as span{color:#00ff41}
 #login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh}
 #login-screen .login-box{width:100%;max-width:360px}
-#login-screen .login-box h1{margin-bottom:4px}
 #login-screen input{display:block;width:100%;background:#111;border:1px solid #333;color:#fff;padding:12px 14px;border-radius:8px;font-family:'Courier New',monospace;font-size:14px;margin-bottom:10px}
 #login-screen input:focus{border-color:#00ff41;outline:none}
 #login-screen input::placeholder{color:#555}
 .login-error{color:#ff4444;font-size:12px;text-align:center;margin-bottom:10px;min-height:16px}
 .login-footer{text-align:center;color:#444;font-size:10px;margin-top:16px;letter-spacing:1px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:#00ff41;color:#000;padding:12px 24px;border-radius:8px;font-size:13px;font-weight:bold;transition:transform 0.3s ease;z-index:9999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.instructions{font-size:11px;color:#777;line-height:1.8}
+.instructions ol{padding-left:20px}
+.instructions li{margin-bottom:8px}
+.instructions code{background:rgba(0,255,65,0.1);padding:2px 6px;border-radius:3px;color:#00ff41}
+.hero-icon{text-align:center;font-size:48px;margin:20px 0 24px}
+.feature{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;font-size:12px;color:#aaa}
+.feature .icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.feature .text{line-height:1.5}
 .admin-input{display:block;width:100%;background:#111;border:1px solid #333;color:#fff;padding:10px 12px;border-radius:6px;font-family:'Courier New',monospace;font-size:13px;margin-bottom:8px}
 .admin-input:focus{border-color:#00ff41;outline:none}
 .admin-input::placeholder{color:#555}
@@ -92,14 +47,18 @@ h1{color:#00ff41;font-size:18px;text-align:center;margin-bottom:4px;letter-spaci
 .user-list-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px}
 .user-list-item .username{color:#00ff41}
 .user-list-item .hash-preview{color:#555;font-size:10px}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px;background:rgba(255,255,255,0.04);border-radius:8px;padding:4px}
+.tab{flex:1;text-align:center;padding:10px;font-size:12px;color:#888;cursor:pointer;border-radius:6px;letter-spacing:1px}
+.tab.active{background:rgba(0,255,65,0.15);color:#00ff41}
+.page{display:none}.page.active{display:block}
 </style>
 </head>
 <body>
 <div id="login-screen">
 <div class="login-box">
-<h1>&#127919; EO SNIPER v7</h1>
-<div class="subtitle">DIRECT API FIRE</div>
-<div style="text-align:center;font-size:32px;margin:20px 0;">&#128274;</div>
+<h1>&#127919; EO SNIPER v8</h1>
+<div class="subtitle">SMART AUTO-DETECT</div>
+<div class="hero-icon">&#128274;</div>
 <input type="text" id="login-user" placeholder="Username" autocomplete="username" autocapitalize="none">
 <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password">
 <div class="login-error" id="login-error"></div>
@@ -107,101 +66,74 @@ h1{color:#00ff41;font-size:18px;text-align:center;margin-bottom:4px;letter-spaci
 <div class="login-footer">Authorized operators only.</div>
 </div>
 </div>
+
 <div id="app" style="display:none;">
-<h1>&#127919; EO SNIPER v7</h1>
-<div class="subtitle">DIRECT API FIRE</div>
+<h1>&#127919; EO SNIPER v8</h1>
+<div class="subtitle">SMART AUTO-DETECT</div>
 <div class="logged-in-as">Operator: <span id="display-user"></span> | <a href="#" onclick="doLogout();return false;" style="color:#ff4444;text-decoration:none;font-size:10px;">LOGOUT</a></div>
+
 <div class="tab-bar" id="tab-bar">
-<div class="tab active" data-tab="schedule">SCHEDULE</div>
-<div class="tab" data-tab="sniper">SNIPER</div>
+<div class="tab active" data-tab="sniper">SNIPER</div>
 <div class="tab" data-tab="howto">HOW TO</div>
 </div>
-<div class="page active" id="page-schedule">
+
+<div class="page active" id="page-sniper">
 <div class="card">
-<h2>WEEKLY SCHEDULE</h2>
-<div style="font-size:10px;color:#666;margin-bottom:12px;">Tap a day to set shift start time. Gate opens 2 hours before.</div>
-<div id="schedule-grid"></div>
+<h2>&#128640; ONE SCRIPT TO RULE THEM ALL</h2>
+<div style="font-size:11px;color:#888;margin-bottom:16px;line-height:1.5;">
+Paste this on the portal. It reads your entire schedule, shows toggles for each day, and fires automatically at gate time. No setup needed.
 </div>
+<button class="btn btn-primary" onclick="copySniperScript()" style="font-size:16px;padding:18px;">&#128203; COPY SNIPER SCRIPT</button>
+</div>
+
 <div class="card">
-<h2>SHARE SCHEDULE</h2>
-<button class="btn btn-secondary" onclick="exportSchedule()">COPY SHARE LINK</button>
-<div class="instructions" style="margin-top:8px;">Share a link with your schedule pre-loaded.</div>
-</div>
-</div>
-<div class="page" id="page-sniper">
-<div class="card countdown-box">
-<div class="next-label">NEXT GATE OPENS</div>
-<div class="next-day" id="next-day">--</div>
-<div class="next-shift" id="next-shift">No shifts scheduled</div>
-<div class="timer" id="timer">--:--:--</div>
-<div class="status" id="sniper-status">Configure schedule first</div>
-</div>
-<button class="btn btn-primary" onclick="copySniperScript()">COPY SNIPER SCRIPT</button>
-<button class="btn btn-secondary" onclick="copySniperForToday()">COPY FOR NEXT GATE ONLY</button>
-<div class="bookmarklet-area">
-<a class="bookmarklet-link" id="bookmarklet-link" href="#">Sniper v7</a>
-<div class="bookmarklet-hint">Desktop: drag to bookmarks bar</div>
-</div>
-<div class="card">
-<div class="notify-toggle">
-<label>Notify 5 min before gate</label>
-<div class="switch" id="notify-switch" onclick="toggleNotify()"></div>
-</div>
-<div class="notify-toggle">
-<label>Notify 1 min before gate</label>
-<div class="switch on" id="notify-1min-switch" onclick="toggleNotify1()"></div>
-</div>
+<h2>WHAT IT DOES</h2>
+<div class="feature"><span class="icon">&#128269;</span><span class="text">Reads your full 2-week schedule from the portal page</span></div>
+<div class="feature"><span class="icon">&#127919;</span><span class="text">Shows overlay with all shifts — toggle &#9989;/&#10060; for each day</span></div>
+<div class="feature"><span class="icon">&#9201;</span><span class="text">Auto-calculates gate time (shift start minus 2 hours)</span></div>
+<div class="feature"><span class="icon">&#128165;</span><span class="text">At gate time — fires API directly, no button clicking</span></div>
+<div class="feature"><span class="icon">&#128257;</span><span class="text">Auto-retries every 500ms if server isn't ready</span></div>
 </div>
 </div>
 <div class="page" id="page-howto">
 <div class="card">
 <h2>DESKTOP</h2>
 <div class="instructions"><ol>
-<li>Enter your shifts in the <strong>Schedule</strong> tab</li>
-<li>Go to <strong>Sniper</strong> tab near gate time</li>
-<li>Click <code>COPY SNIPER SCRIPT</code></li>
+<li>Click <code>COPY SNIPER SCRIPT</code> above</li>
 <li>Open the scheduling portal in another tab</li>
-<li>Navigate to <strong>My Schedule</strong> and click your shift so "Early Out" is visible</li>
-<li>Press <code>F12</code> → Console → type <code>allow pasting</code> → Enter</li>
+<li>Go to <strong>My Schedule</strong> (monthly view)</li>
+<li>Press <code>F12</code> → Console tab → type <code>allow pasting</code> → Enter</li>
 <li>Paste the script → Enter</li>
-<li><strong>Click "Early Out"</strong> to let the script capture your shift data</li>
-<li>Leave it — script fires the API directly at gate time</li>
+<li>An overlay appears showing all your shifts with green/red toggles</li>
+<li>Toggle ON the days you want early out for</li>
+<li>Leave it running — it fires at each gate time automatically</li>
 </ol></div>
 </div>
 <div class="card">
-<h2>iPHONE (SAFARI)</h2>
+<h2>MOBILE</h2>
 <div class="instructions"><ol>
-<li>Add this page to Home Screen</li>
-<li>Enter your schedule</li>
-<li>Open <strong>Safari</strong> → go to portal → My Schedule → click shift</li>
-<li>Tap <code>COPY SNIPER SCRIPT</code></li>
-<li>In Safari address bar, type <code>javascript:</code> then paste</li>
+<li>Copy the script from above</li>
+<li>Open portal in Safari/Chrome</li>
+<li>In the address bar type <code>javascript:</code> then paste the script</li>
+<li>Or use <strong>Kiwi Browser</strong> (Android) for F12 console access</li>
 </ol></div>
 </div>
 <div class="card">
-<h2>ANDROID</h2>
+<h2>v8 — WHAT'S NEW</h2>
 <div class="instructions"><ol>
-<li>Add to Home Screen</li>
-<li><strong>Kiwi Browser</strong> recommended</li>
-<li>Address bar → type <code>javascript:</code> then paste script</li>
-</ol></div>
-</div>
-<div class="card">
-<h2>v7 — WHAT'S NEW</h2>
-<div class="instructions"><ol>
-<li><strong>Direct API fire</strong> — bypasses the Submit button entirely</li>
-<li>Script intercepts session data + shift info from the portal</li>
-<li>At gate time, fires the HTTP POST directly to the server</li>
-<li>No synthetic button clicks needed — no more missed submits</li>
-<li>Auto-retries every 500ms if server isn't ready yet</li>
-<li>Click "Early Out" ONCE before gate to let script capture your data</li>
+<li><strong>Auto-detect</strong> — reads schedule directly from portal DOM</li>
+<li><strong>Toggle UI</strong> — green/red flags for each shift day</li>
+<li><strong>Multi-day</strong> — handles full 2-week schedule</li>
+<li><strong>Direct API</strong> — bypasses Submit button entirely</li>
+<li><strong>Smart retry</strong> — close/reopen loop + API retry</li>
+<li><strong>One script</strong> — no manual schedule entry needed</li>
 </ol></div>
 </div>
 </div>
+
 <div class="page" id="page-admin">
 <div class="card">
 <h2>ADD OPERATOR</h2>
-<div class="instructions" style="margin-bottom:12px;">Enter username + password, generate hash, add to config, push.</div>
 <input class="admin-input" type="text" id="admin-new-user" placeholder="Username" autocapitalize="none">
 <input class="admin-input" type="text" id="admin-new-pass" placeholder="Password">
 <button class="btn btn-secondary" onclick="generateHash()">GENERATE HASH</button>
@@ -214,157 +146,322 @@ h1{color:#00ff41;font-size:18px;text-align:center;margin-bottom:4px;letter-spaci
 </div>
 </div>
 </div>
-<div class="picker-overlay" id="picker-overlay">
-<div class="picker-sheet">
-<div class="picker-header">
-<button class="picker-cancel" onclick="closePicker()">Cancel</button>
-<span class="picker-title" id="picker-title">Set Time</span>
-<button class="picker-done" onclick="confirmPicker()">Done</button>
-</div>
-<div class="picker-wheels">
-<div class="picker-highlight"></div>
-<div class="wheel wheel-hour" id="wheel-hour"><div class="wheel-track" id="track-hour"></div></div>
-<div class="wheel-colon">:</div>
-<div class="wheel wheel-min" id="wheel-min"><div class="wheel-track" id="track-min"></div></div>
-<div class="wheel wheel-ampm" id="wheel-ampm"><div class="wheel-track" id="track-ampm"></div></div>
-</div>
-</div>
-</div>
+
 <div class="toast" id="toast"></div>
 <script>
-const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-const DAY_NAMES=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-const GATE_OFFSET_HOURS=2;
-let currentUser=null,generatedHash='',schedule={},notifyEnabled=false,notify1Enabled=true,countdownInterval=null;
-let pickerDay=null,pickerHour=10,pickerMin=0,pickerAmpm=0;
-
-async function sha256(str){const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));return Array.from(new Uint8Array(buf)).map(x=>x.toString(16).padStart(2,'0')).join('')}
-async function doLogin(){const user=document.getElementById('login-user').value.trim().toLowerCase(),pass=document.getElementById('login-pass').value,err=document.getElementById('login-error');if(!user||!pass){err.textContent='Enter username and password';return}const hash=await sha256(user+':'+pass);if(!ALLOWED_HASHES.includes(hash)){err.textContent='Invalid credentials';document.getElementById('login-pass').value='';return}currentUser=user;localStorage.setItem('eo-session',JSON.stringify({user:currentUser,hash}));showApp()}
-async function checkSession(){try{const s=JSON.parse(localStorage.getItem('eo-session'));if(!s)return false;if(ALLOWED_HASHES.includes(s.hash)){currentUser=s.user;return true}}catch(e){}return false}
-function doLogout(){currentUser=null;localStorage.removeItem('eo-session');document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-error').textContent='';if(countdownInterval)clearInterval(countdownInterval)}
-function showApp(){document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('display-user').textContent=currentUser;if(currentUser.toLowerCase()==='admin'){const t=document.createElement('div');t.className='tab';t.dataset.tab='admin';t.textContent='ADMIN';document.getElementById('tab-bar').appendChild(t);buildUserList()}initApp()}
-
-async function generateHash(){const user=document.getElementById('admin-new-user').value.trim().toLowerCase(),pass=document.getElementById('admin-new-pass').value;if(!user||!pass){document.getElementById('hash-output').textContent='Enter both fields';return}generatedHash=await sha256(user+':'+pass);document.getElementById('hash-output').textContent=generatedHash}
-function copyHashEntry(){const user=document.getElementById('admin-new-user').value.trim().toLowerCase();if(!user||!generatedHash){showToast('Generate hash first');return}copyToClipboard('  "'+generatedHash+'",');showToast('Copied!')}
-function buildUserList(){const list=document.getElementById('user-list');if(!list)return;list.innerHTML='';ALLOWED_HASHES.forEach((h,i)=>{const d=document.createElement('div');d.className='user-list-item';d.innerHTML='<span class="username">operator '+(i+1)+'</span><span class="hash-preview">'+h.substring(0,16)+'...</span>';list.appendChild(d)})}
-
-const ITEM_H=40,PAD=2;
-function buildWheel(trackId,items,initial){const track=document.getElementById(trackId);track.innerHTML='';items.forEach((val,i)=>{const el=document.createElement('div');el.className='wheel-item';el.textContent=val;el.dataset.index=i;track.appendChild(el)});const offset=-(initial*ITEM_H)+(PAD*ITEM_H);track.style.transform='translateY('+offset+'px)';track._currentIndex=initial;track._count=items.length;track._offset=offset;highlightWheel(track)}
-function highlightWheel(track){track.querySelectorAll('.wheel-item').forEach((el,i)=>el.classList.toggle('selected',i===track._currentIndex))}
-function snapWheel(track){let idx=Math.round((PAD*ITEM_H-track._offset)/ITEM_H);idx=Math.max(0,Math.min(idx,track._count-1));track._currentIndex=idx;track._offset=-(idx*ITEM_H)+(PAD*ITEM_H);track.style.transition='transform 0.3s cubic-bezier(0.2,0.8,0.3,1)';track.style.transform='translateY('+track._offset+'px)';highlightWheel(track);setTimeout(()=>{track.style.transition=''},300)}
-function initWheelDrag(wheelId,trackId){const wheel=document.getElementById(wheelId),track=document.getElementById(trackId);let startY=0,startOffset=0,dragging=false,lastY=0,lastTime=0,velocity=0;function onStart(y){dragging=true;startY=y;startOffset=track._offset;velocity=0;lastY=y;lastTime=Date.now();track.style.transition=''}function onMove(y){if(!dragging)return;const now=Date.now(),dt=now-lastTime;if(dt>0)velocity=(y-lastY)/dt;lastY=y;lastTime=now;const delta=y-startY;track._offset=startOffset+delta;const maxOff=PAD*ITEM_H,minOff=-((track._count-1)*ITEM_H)+(PAD*ITEM_H);if(track._offset>maxOff)track._offset=maxOff+(track._offset-maxOff)*0.3;if(track._offset<minOff)track._offset=minOff+(track._offset-minOff)*0.3;track.style.transform='translateY('+track._offset+'px)'}function onEnd(){if(!dragging)return;dragging=false;track._offset+=velocity*120;snapWheel(track)}wheel.addEventListener('touchstart',e=>onStart(e.touches[0].clientY),{passive:true});wheel.addEventListener('touchmove',e=>onMove(e.touches[0].clientY),{passive:true});wheel.addEventListener('touchend',onEnd);wheel.addEventListener('mousedown',e=>{onStart(e.clientY);e.preventDefault()});window.addEventListener('mousemove',e=>{if(dragging)onMove(e.clientY)});window.addEventListener('mouseup',()=>{if(dragging)onEnd()})}
-function openPicker(day){pickerDay=day;document.getElementById('picker-title').textContent=DAY_NAMES[DAYS.indexOf(day)];let h12=10,min=0,ampm=0;if(schedule[day]&&schedule[day]!==null){const[hh,mm]=schedule[day].split(':').map(Number);ampm=hh>=12?1:0;h12=hh%12;if(h12===0)h12=12;min=mm}const hours=[],mins=[];for(let i=1;i<=12;i++)hours.push(String(i));for(let i=0;i<60;i++)mins.push(String(i).padStart(2,'0'));buildWheel('track-hour',hours,h12-1);buildWheel('track-min',mins,min);buildWheel('track-ampm',['AM','PM'],ampm);document.getElementById('picker-overlay').classList.add('open')}
-function closePicker(){document.getElementById('picker-overlay').classList.remove('open');pickerDay=null}
-function confirmPicker(){const hT=document.getElementById('track-hour'),mT=document.getElementById('track-min'),aT=document.getElementById('track-ampm');let h12=hT._currentIndex+1;const min=mT._currentIndex,ispm=aT._currentIndex;let h24;if(ispm===0){h24=h12===12?0:h12}else{h24=h12===12?12:h12+12}schedule[pickerDay]=String(h24).padStart(2,'0')+':'+String(min).padStart(2,'0');saveToStorage();buildScheduleGrid();updateCountdown();updateBookmarklet();closePicker()}
-let dragInited=false;function initDrags(){if(dragInited)return;dragInited=true;initWheelDrag('wheel-hour','track-hour');initWheelDrag('wheel-min','track-min');initWheelDrag('wheel-ampm','track-ampm')}
-
-function buildScheduleGrid(){const grid=document.getElementById('schedule-grid');grid.innerHTML='';DAYS.forEach(day=>{const row=document.createElement('div');row.className='day-row';const label=document.createElement('div');label.className='day-label';label.textContent=day;const timeBtn=document.createElement('div');timeBtn.className='time-display';if(schedule[day]===null){timeBtn.textContent='OFF';timeBtn.classList.add('off')}else if(schedule[day]){timeBtn.textContent=formatTime12(schedule[day])}else{timeBtn.textContent='Tap to set';timeBtn.classList.add('empty')}timeBtn.addEventListener('click',()=>{if(schedule[day]!==null){initDrags();openPicker(day)}});const offBtn=document.createElement('button');offBtn.className='off-toggle'+(schedule[day]===null?' active':'');offBtn.textContent='OFF';offBtn.addEventListener('click',()=>{if(schedule[day]===null){schedule[day]=undefined}else{schedule[day]=null}saveToStorage();buildScheduleGrid();updateCountdown();updateBookmarklet()});const gate=document.createElement('div');gate.className='gate-badge';if(schedule[day]&&schedule[day]!==null){gate.textContent='Gate '+calcGateTime(schedule[day])}row.appendChild(label);row.appendChild(timeBtn);row.appendChild(offBtn);row.appendChild(gate);grid.appendChild(row)})}
-function formatTime12(t){const[h,m]=t.split(':').map(Number);const a=h>=12?'PM':'AM',h12=h===0?12:h>12?h-12:h;return h12+':'+String(m).padStart(2,'0')+' '+a}
-function calcGateTime(s){const[h,m]=s.split(':').map(Number);let t=h*60+m-(GATE_OFFSET_HOURS*60);if(t<0)t+=1440;const gh=Math.floor(t/60)%24,gm=t%60,a=gh>=12?'PM':'AM',h12=gh===0?12:gh>12?gh-12:gh;return h12+':'+String(gm).padStart(2,'0')+a}
-function calcGateDate(s,dow){const now=new Date(),[h,m]=s.split(':').map(Number),jsDow=now.getDay(),cd=jsDow===0?6:jsDow-1;let da=dow-cd;if(da<0)da+=7;const sd=new Date(now);sd.setDate(sd.getDate()+da);sd.setHours(h,m,0,0);const gd=new Date(sd.getTime()-GATE_OFFSET_HOURS*3600000);if(gd<=now){gd.setDate(gd.getDate()+7);sd.setDate(sd.getDate()+7)}return{gateDate:gd,shiftDate:sd}}
-
-function getNextGate(){let c=null,cs=null,cd=null;DAYS.forEach((day,i)=>{const t=schedule[day];if(!t)return;const{gateDate,shiftDate}=calcGateDate(t,i);if(!c||gateDate<c){c=gateDate;cs=shiftDate;cd=day}});return{gateDate:c,shiftDate:cs,day:cd}}
-let notified5=false,notified1=false,lastNotifyGate=null;
-function updateCountdown(){const{gateDate,shiftDate,day}=getNextGate();const dayEl=document.getElementById('next-day'),shiftEl=document.getElementById('next-shift'),timerEl=document.getElementById('timer'),statusEl=document.getElementById('sniper-status');if(!gateDate){dayEl.textContent='--';shiftEl.textContent='No shifts scheduled';timerEl.textContent='--:--:--';timerEl.className='timer';statusEl.textContent='Add shifts in Schedule tab';return}const gk=gateDate.getTime();if(gk!==lastNotifyGate){notified5=false;notified1=false;lastNotifyGate=gk}const fd=DAY_NAMES[DAYS.indexOf(day)];dayEl.textContent=fd;shiftEl.textContent='Shift: '+formatTime12(schedule[day])+' | Gate: '+calcGateTime(schedule[day]);const now=new Date(),rem=gateDate-now;if(rem<=0){timerEl.textContent='GATE OPEN!';timerEl.className='timer imminent';statusEl.textContent='Copy sniper script and paste on portal NOW!';return}const ts=Math.floor(rem/1000),hrs=Math.floor(ts/3600),mins=Math.floor((ts%3600)/60),secs=ts%60;timerEl.textContent=hrs>0?hrs+':'+String(mins).padStart(2,'0')+':'+String(secs).padStart(2,'0'):mins+':'+String(secs).padStart(2,'0');if(rem<10000){timerEl.className='timer imminent';statusEl.textContent='GET READY! Paste script NOW!'}else if(rem<60000){timerEl.className='timer soon';statusEl.textContent='Almost time! Have portal open.'}else if(rem<300000){timerEl.className='timer soon';statusEl.textContent='Open portal and click your shift soon.'}else{timerEl.className='timer';statusEl.textContent='Waiting for gate...'}const sh=shiftDate.getHours(),sm=shiftDate.getMinutes(),sa=sh>=12?'PM':'AM',sh12=sh===0?12:sh>12?sh-12:sh;if(rem<=300000&&rem>295000&&notifyEnabled&&!notified5){notified5=true;sendNotification('5 min until gate!',fd+' shift at '+sh12+':'+String(sm).padStart(2,'0')+' '+sa)}if(rem<=60000&&rem>55000&&notify1Enabled&&!notified1){notified1=true;sendNotification('1 min until gate!','Paste the sniper script NOW!')}}
-function toggleNotify(){notifyEnabled=!notifyEnabled;document.getElementById('notify-switch').classList.toggle('on',notifyEnabled);if(notifyEnabled)requestNotificationPermission();saveToStorage()}
-function toggleNotify1(){notify1Enabled=!notify1Enabled;document.getElementById('notify-1min-switch').classList.toggle('on',notify1Enabled);if(notify1Enabled)requestNotificationPermission();saveToStorage()}
-function requestNotificationPermission(){if('Notification' in window&&Notification.permission==='default')Notification.requestPermission()}
-function sendNotification(title,body){if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body})}
-
-// =====================================================
-// v7 SNIPER SCRIPT GENERATOR — DIRECT API FIRE
-// =====================================================
-function generateSniperScript(gateHour, gateMin, shiftTime12) {
-  // shiftTime12 like "12:00 PM"
-  var st = shiftTime12 || '12:00 PM';
-  return `(function(){
-'use strict';
-var GH=${gateHour},GM=${gateMin},BUF=200,POLL=20,MAX_ATK=60,SVC='https://services.onlineschedule.com/service/tmp/teamMemberOptions/mySchedule';
-var cAID=null,cSID=1,cTime='${st}',fired=false;
-var ov=document.createElement('div');ov.id='eo7';ov.style.cssText='position:fixed;top:10px;right:10px;z-index:999999;background:linear-gradient(135deg,#0a0a1a,#1a1a3e);color:#0f0;font-family:monospace;padding:16px 22px;border-radius:10px;font-size:13px;border:1px solid #0f0;box-shadow:0 0 25px rgba(0,255,65,.2);min-width:320px;backdrop-filter:blur(10px)';
-document.body.appendChild(ov);
-function st2(m,c){c=c||'#0f0';var n=new Date();var t=n.toLocaleTimeString('en-US',{hour12:false})+'.'+String(n.getMilliseconds()).padStart(3,'0');ov.innerHTML='<div style="font-size:10px;color:#555;letter-spacing:2px;margin-bottom:4px">EO SNIPER v7</div><div style="font-size:20px;color:#fff;margin-bottom:8px;font-weight:bold">'+t+'</div><div style="color:'+c+';font-size:12px;line-height:1.4">'+m+'</div>'}
-var _xo=XMLHttpRequest.prototype.open,_xs=XMLHttpRequest.prototype.send;
-XMLHttpRequest.prototype.open=function(m,u){this._m=m;this._u=u;return _xo.apply(this,arguments)};
-XMLHttpRequest.prototype.send=function(b){var self=this;
-if(this._m==='POST'&&(this._u||'').indexOf('EarlyOut')>-1){try{var d=JSON.parse(b);if(d.assignmentId){cAID=d.assignmentId;cSID=d.shiftId||1;cTime=d.requestedOutDateTime||cTime;console.log('[EO7] Captured: ID='+cAID+' shift='+cSID+' time='+cTime);st2('Data captured: ID '+cAID,'#0f0')}}catch(e){}}
-if((this._u||'').indexOf('mySchedule/get')>-1){this.addEventListener('load',function(){try{var r=JSON.parse(this.responseText);function scan(o){if(!o||typeof o!=='object')return;if(Array.isArray(o)){o.forEach(scan);return}if(o.assignmentId){if(!window._eo7_ids)window._eo7_ids=[];window._eo7_ids.push({id:o.assignmentId,sid:o.shiftId,d:o.assignmentDate||o.date,t:o.startTime||o.shiftStartTime})}Object.values(o).forEach(scan)}scan(r)}catch(e){}})}
-return _xs.apply(this,arguments)};
-function fLink(){var ls=document.querySelectorAll('a[href="#"]');for(var i=0;i<ls.length;i++)if(ls[i].textContent.trim()==='Early Out')return ls[i];return null}
-function dOpen(){return!!document.querySelector('mat-dialog-container')}
-function notAvail(){var c=document.querySelector('mat-dialog-container');return c&&c.textContent.indexOf('not yet available')>-1}
-function cDialog(){var c=document.querySelector('mat-dialog-container');if(!c)return;var b=c.querySelector('button.mat-icon-button');if(b)b.click();else document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',keyCode:27,bubbles:true}))}
-function fSubmit(){var c=document.querySelector('mat-dialog-container');if(!c||c.textContent.indexOf('not yet available')>-1)return null;var bs=c.querySelectorAll('button');for(var i=0;i<bs.length;i++)if(bs[i].textContent.trim()==='Submit')return bs[i];return null}
-function fireAPI(){
-var ss=sessionStorage.getItem('SSID'),be=sessionStorage.getItem('APIBE'),dp=sessionStorage.getItem('DP');
-if(!ss||!be){st2('No session tokens!','#f44');return Promise.reject('noauth')}
-if(!cAID){st2('No assignment data! Click Early Out first','#f44');return Promise.reject('nodata')}
-var body=JSON.stringify({requestPTO:0,assignmentId:cAID,shiftId:cSID,requestedOutDateTime:cTime});
-console.log('[EO7] FIRING API: '+body);
-return fetch(SVC+'/EarlyOut',{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json','SSID':ss,'beToken':be,'controlID':dp||'4','Cache-Control':'no-cache','Pragma':'no-cache'},body:body}).then(function(r){return r.json().then(function(d){return{s:r.status,d:d}})}).then(function(r){
-if(r.s===200&&r.d.success!==false){st2('SUBMITTED! API returned 200','#0f0');fired=true;return r}
-return r;
-}).catch(function(e){console.log('[EO7] API err:'+e);return null})}
-function attack(){
-var a=0;
-function go(){
-a++;if(a>MAX_ATK){st2('Max retries. Click Submit manually.','#f44');return}
-if(cAID&&!fired){
-st2('API FIRE attempt #'+a+'...','#f60');
-fireAPI().then(function(r){
-if(r&&(r.s!==200||r.d.success===false)){
-var msg=r.d.message||r.d.msg||('Status '+r.s);
-console.log('[EO7] Retry #'+a+': '+msg);
-st2('Retry #'+a+' — '+msg.substring(0,60),'#fa0');
-setTimeout(go,500);
-}else if(!r){setTimeout(go,500)}
-}).catch(function(){setTimeout(go,500)});
-return}
-if(dOpen()){
-var sub=fSubmit();if(sub){
-try{var ngc=sub.closest('app-early-out');if(ngc){var ctx=ngc.__ngContext__;if(ctx&&Array.isArray(ctx)){for(var i=0;i<ctx.length;i++){if(ctx[i]&&typeof ctx[i]==='object'&&ctx[i].assignmentId){cAID=ctx[i].assignmentId;cSID=ctx[i].shiftId||1;cTime=ctx[i].requestedOutDateTime||cTime;console.log('[EO7] Got ID from ng:'+cAID);break}}}}}catch(e){}
-if(cAID){st2('Got data — firing API...','#f60');setTimeout(go,100);return}
-sub.click();sub.focus();sub.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',keyCode:13,bubbles:true}));
-setTimeout(function(){if(!fired)setTimeout(go,400)},300);return}
-if(notAvail()){st2('Gate not open — retry #'+a,'#fa0');cDialog();setTimeout(function(){var l=fLink();if(l)l.click();setTimeout(go,400)},300);return}
-st2('Dialog loading #'+a,'#fa0');setTimeout(go,200);return}
-var l=fLink();if(l){st2('Clicking Early Out...','#f60');l.click();setTimeout(go,500)}else{st2('"Early Out" link not found!','#f44')}
-}go()}
-function run(){
-st2('ARMED — Gate: '+GH+':'+String(GM).padStart(2,'0')+':00'+(cAID?' | ID:'+cAID:''));
-var iv=setInterval(function(){
-var n=new Date(),ms=(n.getHours()*3600+n.getMinutes()*60+n.getSeconds())*1000+n.getMilliseconds(),tgt=(GH*3600+GM*60)*1000+BUF,rem=tgt-ms;
-if(rem<=0){clearInterval(iv);st2('ATTACK SEQUENCE...','#f60');attack();return}
-var s=Math.floor(rem/1000),mm=Math.floor(s/60),ss=s%60;
-var extra=cAID?' | ID:'+cAID:' | Click Early Out!';
-if(rem<3e3)st2('T-minus '+(rem/1e3).toFixed(2)+'s<br><span style="color:#f33;font-size:14px;font-weight:bold">FIRING IMMINENT</span>'+extra,'#f33');
-else if(rem<1e4)st2('T-minus '+(rem/1e3).toFixed(1)+'s'+extra,'#f60');
-else st2('ARMED — T-minus '+mm+':'+String(ss).padStart(2,'0')+extra);
-},POLL)}
-window.EO_FIRE=function(){if(cAID){attack()}else{st2('No data — click Early Out first','#f44')}};
-window.EO_SET=function(id,sid,t){cAID=id;cSID=sid||1;cTime=t||cTime;st2('Set: ID='+id,'#0f0')};
-var n=new Date(),tgt=new Date();tgt.setHours(GH,GM,0,0);
-if(n>=tgt){st2('Past gate — attacking!','#f60');attack()}else{run()}
-})();`;
-}
-
-function copySniperScript(){const{gateDate,day}=getNextGate();if(!gateDate){showToast('No shifts scheduled!');return}const st=schedule[day]?formatTime12(schedule[day]):'12:00 PM';copyToClipboard(generateSniperScript(gateDate.getHours(),gateDate.getMinutes(),st));showToast('v7 script copied! Paste on portal.')}
-function copySniperForToday(){const{gateDate,day}=getNextGate();if(!gateDate){showToast('No shifts scheduled!');return}const st=schedule[day]?formatTime12(schedule[day]):'12:00 PM';copyToClipboard(generateSniperScript(gateDate.getHours(),gateDate.getMinutes(),st));showToast('Copied! Gate: '+gateDate.getHours()+':'+String(gateDate.getMinutes()).padStart(2,'0'))}
-function updateBookmarklet(){const{gateDate,day}=getNextGate();const link=document.getElementById('bookmarklet-link');if(!gateDate){link.href='#';return}const st=schedule[day]?formatTime12(schedule[day]):'12:00 PM';link.href='javascript:'+encodeURIComponent(generateSniperScript(gateDate.getHours(),gateDate.getMinutes(),st))}
-function exportSchedule(){const data={s:{}};DAYS.forEach(day=>{if(schedule[day])data.s[day]=schedule[day];else if(schedule[day]===null)data.s[day]='OFF'});const url=location.origin+location.pathname+'?d='+btoa(JSON.stringify(data));copyToClipboard(url);showToast('Share link copied!')}
-function checkUrlImport(){const d=new URLSearchParams(location.search).get('d');if(!d)return;try{const data=JSON.parse(atob(d));if(data.s)DAYS.forEach(day=>{if(data.s[day]==='OFF')schedule[day]=null;else if(data.s[day])schedule[day]=data.s[day]});saveToStorage();history.replaceState({},'',location.pathname);showToast('Schedule imported!')}catch(e){}}
-function storageKey(k){return 'eo-'+currentUser+'-'+k}
-function saveToStorage(){try{localStorage.setItem(storageKey('schedule'),JSON.stringify(schedule));localStorage.setItem(storageKey('notify'),JSON.stringify({n5:notifyEnabled,n1:notify1Enabled}))}catch(e){}}
-function loadFromStorage(){try{const s=localStorage.getItem(storageKey('schedule'));if(s)schedule=JSON.parse(s);const n=localStorage.getItem(storageKey('notify'));if(n){const p=JSON.parse(n);notifyEnabled=!!p.n5;notify1Enabled=p.n1!==false}}catch(e){}}
-function setupTabs(){document.querySelectorAll('.tab').forEach(tab=>{tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));tab.classList.add('active');document.getElementById('page-'+tab.dataset.tab).classList.add('active')})})}
-function initApp(){loadFromStorage();checkUrlImport();buildScheduleGrid();setupTabs();updateCountdown();countdownInterval=setInterval(updateCountdown,200);updateBookmarklet();if(notifyEnabled)document.getElementById('notify-switch').classList.add('on');if(notify1Enabled)document.getElementById('notify-1min-switch').classList.add('on')}
-function copyToClipboard(text){if(navigator.clipboard)navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));else fallbackCopy(text)}
-function fallbackCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;top:-9999px';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+// ===== AUTH =====
+let currentUser=null,generatedHash='';
+async function sha256(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function doLogin(){const u=document.getElementById('login-user').value.trim().toLowerCase(),p=document.getElementById('login-pass').value,e=document.getElementById('login-error');if(!u||!p){e.textContent='Enter username and password';return}const h=await sha256(u+':'+p),m=ALLOWED_USERS.find(x=>x.username.toLowerCase()===u&&x.hash===h);if(!m){e.textContent='Invalid credentials';document.getElementById('login-pass').value='';return}currentUser=m.username;localStorage.setItem('eo-session',JSON.stringify({user:currentUser,hash:h}));showApp()}
+async function checkSession(){try{const s=JSON.parse(localStorage.getItem('eo-session'));if(!s)return false;const m=ALLOWED_USERS.find(x=>x.username.toLowerCase()===s.user.toLowerCase()&&x.hash===s.hash);if(m){currentUser=m.username;return true}}catch(e){}return false}
+function doLogout(){currentUser=null;localStorage.removeItem('eo-session');document.getElementById('app').style.display='none';document.getElementById('login-screen').style.display='flex';document.getElementById('login-user').value='';document.getElementById('login-pass').value='';document.getElementById('login-error').textContent=''}
+function showApp(){document.getElementById('login-screen').style.display='none';document.getElementById('app').style.display='block';document.getElementById('display-user').textContent=currentUser;if(currentUser.toLowerCase()==='admin'){const t=document.createElement('div');t.className='tab';t.dataset.tab='admin';t.textContent='ADMIN';document.getElementById('tab-bar').appendChild(t);buildUserList()}setupTabs()}
+async function generateHash(){const u=document.getElementById('admin-new-user').value.trim().toLowerCase(),p=document.getElementById('admin-new-pass').value;if(!u||!p){document.getElementById('hash-output').textContent='Enter both fields';return}generatedHash=await sha256(u+':'+p);document.getElementById('hash-output').textContent=generatedHash}
+function copyHashEntry(){const u=document.getElementById('admin-new-user').value.trim().toLowerCase();if(!u||!generatedHash){showToast('Generate hash first');return}copyText('  { username: "'+u+'", hash: "'+generatedHash+'" },');showToast('Copied!')}
+function buildUserList(){const l=document.getElementById('user-list');if(!l)return;l.innerHTML='';ALLOWED_USERS.forEach(u=>{const d=document.createElement('div');d.className='user-list-item';d.innerHTML='<span class="username">'+u.username+'</span><span class="hash-preview">'+u.hash.substring(0,12)+'...</span>';l.appendChild(d)})}
+function setupTabs(){document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.getElementById('page-'+t.dataset.tab).classList.add('active')})})}
+function copyText(t){if(navigator.clipboard)navigator.clipboard.writeText(t).catch(()=>fbCopy(t));else fbCopy(t)}
+function fbCopy(t){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;top:-9999px';document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a)}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 document.getElementById('login-user').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pass').focus()});
-document.getElementById('picker-overlay').addEventListener('click',e=>{if(e.target.id==='picker-overlay')closePicker()});
-checkSession().then(valid=>{if(valid)showApp()});
+checkSession().then(v=>{if(v)showApp()});
+// ===== SNIPER SCRIPT GENERATOR =====
+function copySniperScript(){
+copyText(getSniperScript());
+showToast('v8 script copied! Paste on portal.');
+}
+function getSniperScript(){ return `(function(){
+'use strict';
+if(document.getElementById('eo8')){document.getElementById('eo8').remove()}
+var SVC='https://services.onlineschedule.com/service/tmp/teamMemberOptions/mySchedule';
+var GATE_OFFSET=2,POLL=20,MAX_ATK=60,BUF=200;
+var shifts=[],activeShifts={},capturedIds={},fired={};
+var currentCountdown=null,countdownIv=null;
+
+/* ===== SCRAPE SCHEDULE FROM DOM ===== */
+function scrapeShifts(){
+  var cells=document.querySelectorAll('[role="gridcell"]');
+  var colH=document.querySelectorAll('[role="columnheader"]');
+  var dayNames=[];for(var i=0;i<colH.length;i++)dayNames.push(colH[i].textContent.trim());
+  var monthEl=null;var allEls=document.querySelectorAll('*');
+  for(var i=0;i<allEls.length;i++){var t=allEls[i].textContent.trim();
+    if(t.match(/^(January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{4}$/)){monthEl=t;break}}
+  if(!monthEl)return[];
+  var parts=monthEl.split(' ');
+  var monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var monthIdx=monthNames.indexOf(parts[0]);
+  var year=parseInt(parts[1]);
+  var result=[];
+  for(var i=0;i<cells.length;i++){
+    var text=cells[i].textContent.trim();
+    var dayMatch=text.match(/^(\\d{1,2})/);
+    if(!dayMatch)continue;
+    var day=parseInt(dayMatch[1]);
+    var dow=dayNames[i%7]||'';
+    var isOff=text.indexOf('OFF')>-1;
+    var tm=text.match(/(\\d{1,2}:\\d{2})(AM|PM)/gi);
+    if(!tm||isOff)continue;
+    var mainTime=null;
+    var hMatch=text.match(/(\\d{1,2}:\\d{2})(AM|PM)\\s*\\((\\d+\\.?\\d*)\\s*hours?\\)/gi);
+    if(hMatch){for(var j=0;j<hMatch.length;j++){var hm=hMatch[j].match(/(\\d+\\.?\\d*)\\s*hours?/);if(hm&&parseFloat(hm[1])>=4){var tmm=hMatch[j].match(/(\\d{1,2}:\\d{2})(AM|PM)/i);if(tmm){mainTime=tmm[1]+' '+tmm[2];break}}}}
+    if(!mainTime){var firstT=text.match(/(\\d{1,2}:\\d{2})(AM|PM)/i);if(firstT)mainTime=firstT[1]+' '+firstT[2]}
+    if(!mainTime)continue;
+    var dateStr=year+'-'+String(monthIdx+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+    result.push({day:day,dow:dow,date:dateStr,time:mainTime,el:cells[i]});
+  }
+  return result;
+}
+
+/* ===== TIME HELPERS ===== */
+function parseT(t){var m=t.match(/(\\d{1,2}):(\\d{2})\\s*(AM|PM)/i);if(!m)return null;var h=parseInt(m[1]),mn=parseInt(m[2]),ap=m[3].toUpperCase();if(ap==='PM'&&h!==12)h+=12;if(ap==='AM'&&h===12)h=0;return{h:h,m:mn}}
+function gateTime(sh,sm){var t=sh*60+sm-(GATE_OFFSET*60);if(t<0)t+=1440;return{h:Math.floor(t/60)%24,m:t%60}}
+function fmt12(h,m){var a=h>=12?'PM':'AM';var h2=h===0?12:h>12?h-12:h;return h2+':'+String(m).padStart(2,'0')+' '+a}
+function fmtGate(timeStr){var p=parseT(timeStr);if(!p)return'?';var g=gateTime(p.h,p.m);return fmt12(g.h,g.m)}
+
+/* ===== BUILD OVERLAY UI ===== */
+function buildUI(){
+  shifts=scrapeShifts();
+  if(!shifts.length){alert('No shifts found! Make sure you are on the monthly schedule view.');return}
+  var today=new Date().toISOString().split('T')[0];
+  shifts.forEach(function(s){if(s.date>=today&&!(s.date in activeShifts))activeShifts[s.date]=true});
+  var panel=document.createElement('div');panel.id='eo8';
+  panel.style.cssText='position:fixed;top:0;right:0;width:320px;height:100vh;z-index:999999;background:linear-gradient(180deg,#0a0a1a,#111130);border-left:1px solid #00ff41;font-family:monospace;overflow-y:auto;box-shadow:-5px 0 30px rgba(0,0,0,0.5)';
+  var hdr='<div style="padding:12px 16px;border-bottom:1px solid #222"><div style="font-size:10px;color:#555;letter-spacing:2px">EO SNIPER v8.1</div><div style="font-size:14px;color:#fff;font-weight:bold;margin-top:2px" id="eo8-clock">--:--:--</div><div style="font-size:11px;color:#00ff41;margin-top:4px" id="eo8-status">Loading schedule...</div></div>';
+  var rows='<div style="padding:8px 16px" id="eo8-list">';
+  shifts.forEach(function(s){
+    var isPast=s.date<today;
+    var isActive=activeShifts[s.date]&&!isPast;
+    var gt=fmtGate(s.time);
+    rows+='<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #1a1a2e;'+(isPast?'opacity:0.3':'')+'" data-date="'+s.date+'">';
+    rows+='<div style="cursor:'+(isPast?'default':'pointer')+';font-size:20px" class="eo8-toggle" data-date="'+s.date+'">'+(isPast?'\\u2B1B':(isActive?'\\u2705':'\\u274C'))+'</div>';
+    rows+='<div style="flex:1"><div style="color:#fff;font-size:12px;font-weight:bold">'+s.dow+' '+s.date.split("-")[1]+'/'+s.date.split("-")[2]+'</div>';
+    rows+='<div style="color:#888;font-size:10px">Shift: '+s.time+' \\u2192 Gate: '+gt+'</div></div>';
+    rows+='<div style="font-size:9px;color:'+(isActive?'#00ff41':'#555')+'" id="eo8-st-'+s.date+'">'+(isPast?'PAST':(isActive?'ARMED':'OFF'))+'</div>';
+    rows+='</div>';
+  });
+  rows+='</div>';
+  var footer='<div style="padding:12px 16px;border-top:1px solid #222"><div style="font-size:10px;color:#555;text-align:center;margin-bottom:8px">Click \\u2705/\\u274C to toggle days</div><div style="font-size:10px;color:#333;text-align:center">Tap shift on calendar to capture ID before gate</div></div>';
+  panel.innerHTML=hdr+rows+footer;
+  document.body.appendChild(panel);
+  panel.addEventListener('click',function(e){
+    var tog=e.target.closest('.eo8-toggle');
+    if(!tog)return;
+    var d=tog.dataset.date;
+    var today2=new Date().toISOString().split('T')[0];
+    if(d<today2)return;
+    activeShifts[d]=!activeShifts[d];
+    tog.textContent=activeShifts[d]?'\\u2705':'\\u274C';
+    var st=document.getElementById('eo8-st-'+d);
+    if(st){st.textContent=activeShifts[d]?'ARMED':'OFF';st.style.color=activeShifts[d]?'#00ff41':'#555'}
+    updateNextGate();
+  });
+  updateNextGate();
+  startClock();
+}
+
+/* ===== CLOCK & COUNTDOWN ===== */
+function startClock(){setInterval(function(){
+  var n=new Date();
+  var el=document.getElementById('eo8-clock');
+  if(el)el.textContent=n.toLocaleTimeString('en-US',{hour12:false})+'.'+String(n.getMilliseconds()).padStart(3,'0');
+},50)}
+function updateNextGate(){
+  if(countdownIv){clearInterval(countdownIv);countdownIv=null}
+  currentCountdown=null;
+  var now=new Date();var today=now.toISOString().split('T')[0];
+  var next=null,nextShift=null;
+  shifts.forEach(function(s){
+    if(!activeShifts[s.date]||s.date<today||fired[s.date])return;
+    var p=parseT(s.time);if(!p)return;
+    var g=gateTime(p.h,p.m);
+    var gateDate=new Date(s.date+'T'+String(g.h).padStart(2,'0')+':'+String(g.m).padStart(2,'0')+':00');
+    if(s.date===today&&gateDate<=now)return;
+    if(!next||gateDate<next){next=gateDate;nextShift=s}
+  });
+  /* Also check today even if gate is NOW */
+  shifts.forEach(function(s){
+    if(!activeShifts[s.date]||s.date!==today||fired[s.date])return;
+    var p=parseT(s.time);if(!p)return;
+    var g=gateTime(p.h,p.m);
+    var gateDate=new Date(s.date+'T'+String(g.h).padStart(2,'0')+':'+String(g.m).padStart(2,'0')+':00');
+    if(gateDate<=now&&(!next||gateDate>new Date(now.getTime()-30*60000))){
+      next=gateDate;nextShift=s}
+  });
+  if(!nextShift){setStatus('No upcoming gates armed','#888');return}
+  currentCountdown={gate:next,shift:nextShift};
+  if(next<=now){setStatus('GATE OPEN — '+nextShift.dow+' '+nextShift.time+' — FIRING!','#ff3333');attack(nextShift);return}
+  countdownIv=setInterval(function(){
+    var n2=new Date();var rem=next-n2;
+    if(rem<=0){clearInterval(countdownIv);countdownIv=null;setStatus('GATE OPEN — FIRING!','#ff3333');attack(nextShift);return}
+    var s=Math.floor(rem/1000),mm=Math.floor(s/60),ss=s%60;
+    var stEl=document.getElementById('eo8-st-'+nextShift.date);
+    if(rem<3000){setStatus('T-minus '+(rem/1000).toFixed(2)+'s — FIRING IMMINENT','#ff3333');if(stEl)stEl.textContent='IMMINENT'}
+    else if(rem<10000){setStatus('T-minus '+(rem/1000).toFixed(1)+'s — '+nextShift.dow+' '+nextShift.time,'#ffaa00')}
+    else{setStatus('Next: '+nextShift.dow+' '+nextShift.time+' — T-minus '+mm+':'+String(ss).padStart(2,'0'),'#00ff41')}
+  },POLL);
+}
+function setStatus(m,c){var el=document.getElementById('eo8-status');if(el){el.textContent=m;el.style.color=c||'#00ff41'}}
+
+/* ===== ANGULAR COMPONENT SCRAPER ===== */
+function scrapeDialogData(){
+  var eo=document.querySelector('app-early-out');
+  if(!eo||!eo.__ngContext__)return null;
+  var ctx=eo.__ngContext__;
+  for(var i=0;i<ctx.length;i++){
+    if(ctx[i]&&typeof ctx[i]==='object'&&ctx[i].data&&ctx[i].data.AssignmentId){
+      var d=ctx[i].data;
+      var aid=d.AssignmentId, sid=d.ShiftID||1, time=d.Time||'12:00 PM', date=null;
+      if(d.Date){try{date=typeof d.Date==='string'?d.Date.split('T')[0]:d.Date.toISOString().split('T')[0]}catch(e){}}
+      /* Match to shift */
+      shifts.forEach(function(s){
+        if((date&&s.date===date)||(time&&s.time.replace(' ','')===time.replace(' ',''))){
+          capturedIds[s.date]={aid:aid,sid:sid,time:time};
+          var stEl=document.getElementById('eo8-st-'+s.date);
+          if(stEl&&activeShifts[s.date]){stEl.textContent='ID:'+aid;stEl.style.color='#00ff41'}
+        }
+      });
+      setStatus('Scraped ID: '+aid+' from dialog','#00ff41');
+      console.log('[EO8] Scraped __ngContext__: ID='+aid+' shift='+sid+' time='+time+' date='+date);
+      return{aid:aid,sid:sid,time:time,date:date};
+    }
+  }
+  return null;
+}
+/* Watch for dialog appearing anywhere */
+var dialogObs=new MutationObserver(function(){
+  var eo=document.querySelector('app-early-out');
+  if(eo)scrapeDialogData();
+});
+dialogObs.observe(document.body,{childList:true,subtree:true});
+
+/* ===== XHR INTERCEPTOR ===== */
+var _xo=XMLHttpRequest.prototype.open,_xs=XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.open=function(m,u){this._m=m;this._u=u;return _xo.apply(this,arguments)};
+XMLHttpRequest.prototype.send=function(b){
+  if(this._m==='POST'&&(this._u||'').indexOf('EarlyOut')>-1){
+    try{var d=JSON.parse(b);if(d.assignmentId){
+      capturedIds[d.assignmentId]={aid:d.assignmentId,sid:d.shiftId||1,time:d.requestedOutDateTime};
+      shifts.forEach(function(s){
+        if(d.requestedOutDateTime&&s.time.replace(' ','')===d.requestedOutDateTime.replace(' ','')){
+          capturedIds[s.date]={aid:d.assignmentId,sid:d.shiftId||1,time:d.requestedOutDateTime};
+          var stEl=document.getElementById('eo8-st-'+s.date);
+          if(stEl&&activeShifts[s.date]){stEl.textContent='ID:'+d.assignmentId;stEl.style.color='#00ff41'}
+        }
+      });
+      setStatus('Captured ID: '+d.assignmentId,'#00ff41');
+    }}catch(e){}}
+  return _xs.apply(this,arguments)};
+
+/* ===== API FIRE ===== */
+function fireAPI(aid,sid,time){
+  var ss=sessionStorage.getItem('SSID'),be=sessionStorage.getItem('APIBE'),dp=sessionStorage.getItem('DP');
+  if(!ss||!be)return Promise.reject('noauth');
+  var body=JSON.stringify({requestPTO:0,assignmentId:aid,shiftId:sid||1,requestedOutDateTime:time});
+  return fetch(SVC+'/EarlyOut',{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json','SSID':ss,'beToken':be,'controlID':dp||'4','Cache-Control':'no-cache','Pragma':'no-cache'},body:body})
+    .then(function(r){return r.json().then(function(d){return{s:r.status,d:d}})});
+}
+
+/* ===== ATTACK SEQUENCE ===== */
+function attack(shift){
+  if(fired[shift.date])return;
+  var stEl=document.getElementById('eo8-st-'+shift.date);
+  var data=capturedIds[shift.date];
+  var attempt=0;
+
+  function tryAPI(){
+    attempt++;
+    if(attempt>MAX_ATK){if(stEl){stEl.textContent='FAILED';stEl.style.color='#ff4444'}setStatus('Max retries for '+shift.date,'#ff4444');nextAfterFire(shift);return}
+    if(!data){
+      /* Need to click Early Out to get assignmentId */
+      setStatus('Getting ID — clicking Early Out...','#ffaa00');
+      if(stEl)stEl.textContent='GETTING ID...';
+      /* Click the shift cell to expand, then find Early Out link */
+      if(shift.el)shift.el.click();
+      setTimeout(function(){
+        var links=document.querySelectorAll('a[href="#"]');
+        var eoLink=null;for(var i=0;i<links.length;i++)if(links[i].textContent.trim()==='Early Out'){eoLink=links[i];break}
+        if(eoLink){eoLink.click();
+          setTimeout(function(){
+            /* FIRST: Try scraping Angular component data directly */
+            var scraped=scrapeDialogData();
+            if(scraped&&scraped.date){data=capturedIds[shift.date]}
+            if(!data&&scraped){
+              /* Match by time if date didn't match */
+              if(scraped.time&&shift.time.replace(' ','')===scraped.time.replace(' ','')){
+                capturedIds[shift.date]={aid:scraped.aid,sid:scraped.sid,time:scraped.time};
+                data=capturedIds[shift.date];
+              }
+            }
+            if(data){tryAPI();return}
+            /* Check if we captured the ID from XHR interceptor */
+            data=capturedIds[shift.date];
+            if(data){tryAPI();return}
+            /* Check dialog for "not yet available" — scrape ID, close and retry */
+            var c=document.querySelector('mat-dialog-container');
+            if(c){
+              /* Even "not available" dialog has the ID in Angular — try scraping again */
+              if(!data){var scraped2=scrapeDialogData();if(scraped2){
+                capturedIds[shift.date]={aid:scraped2.aid,sid:scraped2.sid,time:scraped2.time};
+                data=capturedIds[shift.date];
+              }}
+              if(c.textContent.indexOf('not yet available')>-1){
+                var cb=c.querySelector('button.mat-icon-button');if(cb)cb.click();
+                setStatus('Gate not open — retry #'+attempt+(data?' (ID:'+data.aid+')':''),'#ffaa00');
+                setTimeout(tryAPI,500);return;
+              }
+              /* Dialog open with submit available — try to get ID from interceptor */
+              setTimeout(function(){data=capturedIds[shift.date];if(data)tryAPI();else{setStatus('Waiting for ID capture...','#ffaa00');setTimeout(tryAPI,500)}},300);
+              return;
+            }
+            setTimeout(tryAPI,500);
+          },600);
+        }else{setStatus('Early Out link not found!','#ff4444')}
+      },400);
+      return;
+    }
+    /* We have the ID — fire API */
+    setStatus('API FIRE #'+attempt+' for '+shift.dow+' '+shift.time,'#ff6600');
+    if(stEl){stEl.textContent='FIRE #'+attempt;stEl.style.color='#ff6600'}
+    fireAPI(data.aid,data.sid,data.time).then(function(r){
+      if(r.s===200&&r.d.success!==false){
+        fired[shift.date]=true;
+        if(stEl){stEl.textContent='SUBMITTED!';stEl.style.color='#00ff41'}
+        setStatus('SUBMITTED! '+shift.dow+' '+shift.time,'#00ff41');
+        /* Close any open dialog */
+        var c=document.querySelector('mat-dialog-container');
+        if(c){var cb=c.querySelector('button.mat-icon-button');if(cb)cb.click()}
+        setTimeout(function(){nextAfterFire(shift)},2000);
+      }else{
+        var msg=(r.d.message||r.d.msg||'').substring(0,50);
+        setStatus('Retry #'+attempt+': '+msg,'#ffaa00');
+        setTimeout(tryAPI,500);
+      }
+    }).catch(function(){setTimeout(tryAPI,500)});
+  }
+  tryAPI();
+}
+
+function nextAfterFire(shift){
+  /* Update toggle display */
+  var tog=document.querySelector('.eo8-toggle[data-date="'+shift.date+'"]');
+  if(tog)tog.textContent='\\u2705';
+  /* Check for next gate */
+  updateNextGate();
+}
+
+/* ===== MANUAL COMMANDS ===== */
+window.EO_FIRE=function(date){var s=shifts.find(function(x){return x.date===date});if(s)attack(s);else console.log('No shift for '+date)};
+window.EO_SET=function(date,aid,sid,time){capturedIds[date]={aid:aid,sid:sid||1,time:time};console.log('Set '+date+': ID='+aid)};
+
+/* ===== BOOT ===== */
+console.log('[EO8] ==========================================');
+console.log('[EO8] EO SNIPER v8.1 — ANGULAR SCRAPE + API');
+console.log('[EO8] Auto-captures AssignmentId from dialog');
+console.log('[EO8] ==========================================');
+buildUI();
+})();`;
+}
 </script>
 </body>
 </html>
