@@ -175,7 +175,7 @@ function getSniperScript(){ return `(function(){
 'use strict';
 if(document.getElementById('eo8')){document.getElementById('eo8').remove()}
 var SVC='https://services.onlineschedule.com/service/tmp/teamMemberOptions/mySchedule';
-var GATE_OFFSET=2,POLL=20,MAX_ATK=60,BUF=200;
+var GATE_OFFSET=2,POLL=10,MAX_ATK=300,BUF=50;
 var shifts=[],activeShifts={},capturedIds={},fired={};
 var currentCountdown=null,countdownIv=null;
 
@@ -408,16 +408,16 @@ function attack(shift){
               if(c.textContent.indexOf('not yet available')>-1){
                 var cb=c.querySelector('button.mat-icon-button');if(cb)cb.click();
                 setStatus('Gate not open — retry #'+attempt+(data?' (ID:'+data.aid+')':''),'#ffaa00');
-                setTimeout(tryAPI,500);return;
+                setTimeout(tryAPI,100);return;
               }
               /* Dialog open with submit available — try to get ID from interceptor */
-              setTimeout(function(){data=capturedIds[shift.date];if(data)tryAPI();else{setStatus('Waiting for ID capture...','#ffaa00');setTimeout(tryAPI,500)}},300);
+              setTimeout(function(){data=capturedIds[shift.date];if(data)tryAPI();else{setStatus('Waiting for ID capture...','#ffaa00');setTimeout(tryAPI,100)}},150);
               return;
             }
-            setTimeout(tryAPI,500);
-          },600);
+            setTimeout(tryAPI,100);
+          },300);
         }else{setStatus('Early Out link not found!','#ff4444')}
-      },400);
+      },200);
       return;
     }
     /* We have the ID — fire API */
@@ -435,9 +435,9 @@ function attack(shift){
       }else{
         var msg=(r.d.message||r.d.msg||'').substring(0,50);
         setStatus('Retry #'+attempt+': '+msg,'#ffaa00');
-        setTimeout(tryAPI,500);
+        setTimeout(tryAPI,100);
       }
-    }).catch(function(){setTimeout(tryAPI,500)});
+    }).catch(function(){setTimeout(tryAPI,100)});
   }
   tryAPI();
 }
